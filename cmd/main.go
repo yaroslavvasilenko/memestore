@@ -1,42 +1,41 @@
 package main
 
 import (
-	"context"
-	"log"
-
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"musicBot/internal/app"
-	"musicBot/pkg/logging"
+	log "github.com/sirupsen/logrus"
+	"memestore/internal/app"
+	"memestore/pkg/config"
 )
 
 func main() {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
-	logger := logging.GetLogger(ctx)
-
-	logger.Info("config initializing")
-
-	ctx = logging.ContextWithLogger(ctx, logger)
-
-	app, err := app.NewApp()
+	cfg, err := config.GetConf()
 	if err != nil {
-		logger.Fatal("fatal init")
+		log.Fatal(err)
+	}
+	log.Info("config initializing")
+
+	a, err := app.NewApp(cfg)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	for update := range *app.BUpdateChannel {
+	log.Info("Running Application")
+
+	for update := range *a.MessChan {
 		if update.Message != nil { // If we got a message
-			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+			log.Info("[%s] %s", update.Message.From.UserName, update.Message.Text)
 
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
 			msg.ReplyToMessageID = update.Message.MessageID
 
-			_, err := app.Bapi.Send(msg)
+			m, err := a.Bot.Send(msg)
 			if err != nil {
-				logger.Debug("deb")
-				return
+				log.Info(m)
 			}
 		}
 	}
+
+	//a.Run(ctx)
 
 }
