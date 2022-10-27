@@ -1,25 +1,22 @@
 package telegramapi
 
 import (
-	"log"
-
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"memestore/pkg/config"
 )
 
-func InitBot() (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel) {
-	bot, err := tgbotapi.NewBotAPI("5496447413:AAENVSjTJw_3Uk7CUEzoNX23XC185eY7hH8")
+func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, error) {
+	bot, err := tgbotapi.NewBotAPI(cfg.TeleToken) //  env
 	if err != nil {
-		log.Panic(err)
+		return nil, nil, err
 	}
 
-	bot.Debug = true
-
-	log.Printf("Authorized on account %s", bot.Self.UserName)
+	bot.Debug = cfg.Debug //  debag or no
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 30
 
 	updates := bot.GetUpdatesChan(u)
 
-	return bot, &updates
+	return bot, &updates, err
 }
