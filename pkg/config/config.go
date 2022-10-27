@@ -29,7 +29,7 @@ func GetConf() (*Config, error) {
 	return cfg, nil
 }
 
-// Simple helper function to read an environment or return a default value
+// Simple helper function to read an environment variable or return a default value
 func getVarEnv(key string, defaultVal string) string {
 	if value, exists := os.LookupEnv(key); exists {
 		return value
