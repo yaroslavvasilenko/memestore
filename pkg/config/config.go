@@ -20,12 +20,13 @@ func GetConf() (*Config, error) {
 		return nil, err
 	}
 
-	return &Config{
+	cfg := &Config{
 		TeleToken: getVarEnv("TELEGRAM_TOKEN", ""),
 		Debug:     boolEnv(getVarEnv("DEBUG", "true")),
 		LogPath:   getVarEnv("LOG_PATH", "./log.txt"),
 		LogLevel:  getVarEnv("LOG_LEVEL", "info"),
-	}, nil
+	}
+	return cfg, nil
 }
 
 // Simple helper function to read an environment or return a default value

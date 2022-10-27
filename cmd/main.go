@@ -8,34 +8,33 @@ import (
 )
 
 func main() {
-
 	cfg, err := config.GetConf()
 	if err != nil {
 		log.Fatal(err)
 	}
 	log.Info("config initializing")
 
-	a, err := app.NewApp(cfg)
+	app, err := app.NewApp(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Info("Running Application")
+	log.Info("Bot polling started")
 
-	for update := range *a.MessChan {
-		if update.Message != nil { // If we got a message
-			log.Info("[%s] %s", update.Message.From.UserName, update.Message.Text)
+	for update := range *app.MessChan {
+		if update.Message != nil { // If we got app message
+			log.WithFields(log.Fields{
+				"userName": update.Message.From.UserName,
+				"mess":     update.Message.Text}).Info("mess user")
 
 			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
 			msg.ReplyToMessageID = update.Message.MessageID
 
-			m, err := a.Bot.Send(msg)
+			m, err := app.Bot.Send(msg)
 			if err != nil {
-				log.Info(m)
+				log.Info("%s", m)
 			}
 		}
 	}
-
-	//a.Run(ctx)
 
 }

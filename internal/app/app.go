@@ -36,8 +36,12 @@ func NewApp(cfg *config.Config) (*App, error) {
 	}
 	log.Printf("Authorized on account %s", bApi.Self.UserName)
 
-	return &App{Mdb: mdb,
+	app := &App{
+		Mdb:      mdb,
 		Bot:      bApi,
 		MessChan: mesChan,
-		LogFile:  logF}, err
+		LogFile:  logF,
+	}
+
+	return app, err
 }
