@@ -28,4 +28,5 @@ func (app *App) makeTypeDownload(m *tgbotapi.Message) fileSystem.IDowload {
 			Size: m.Audio.FileSize,
 		}
 	}
+	return nil
 }

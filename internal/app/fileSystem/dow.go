@@ -15,7 +15,7 @@ type IDowload interface {
 }
 
 func Dowl(id string, path string) {
-	resp, _ := http.Get()
+	resp, _ := http.Get(id)
 	defer resp.Body.Close()
 	out, err := os.Create(path)
 	defer out.Close()

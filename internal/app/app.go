@@ -5,7 +5,6 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	log "github.com/sirupsen/logrus"
-	"go.mongodb.org/mongo-driver/mongo"
 	"memestore/pkg/config"
 	"memestore/pkg/logging"
 
@@ -14,7 +13,7 @@ import (
 )
 
 type App struct {
-	Mdb      *mongo.Client
+	Db       *mongodb.Database
 	Bot      *tgbotapi.BotAPI
 	MessChan *tgbotapi.UpdatesChannel
 	LogFile  *os.File
@@ -37,7 +36,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	log.Printf("Authorized on account %s", bApi.Self.UserName)
 
 	app := &App{
-		Mdb:      mdb,
+		Db:       mdb,
 		Bot:      bApi,
 		MessChan: mesChan,
 		LogFile:  logF,
@@ -64,7 +63,7 @@ func (app *App) Run() {
 		} else {
 			file := app.makeTypeDownload(update.Message)
 			file.DownloadFile()
-			app.Mdb.
+
 		}
 	}
 }
