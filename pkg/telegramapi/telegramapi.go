@@ -14,7 +14,7 @@ func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, er
 	bot.Debug = cfg.Debug //  debag or no
 
 	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 30
+	u.Timeout = 60
 
 	updates := bot.GetUpdatesChan(u)
 
