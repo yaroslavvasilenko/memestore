@@ -9,7 +9,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-func InitMongo() (*mongo.Client, error) {
+type Database struct {
+	Client     *mongo.Client
+	Collection *Collection
+}
+
+type Collection struct {
+	Audio *AudioCollection
+	Doc   *DocCollection
+}
+
+func InitMongo() (*Database, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
@@ -20,5 +30,16 @@ func InitMongo() (*mongo.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	return client, err
+
+	db := client.Database("memestore")
+
+	dbAndCol := &Database{
+		Client: client,
+		Collection: &Collection{
+			Audio: &AudioCollection{handle: db.Collection("audio")},
+			Doc:   &DocCollection{handle: db.Collection("document")},
+		},
+	}
+
+	return dbAndCol, err
 }
