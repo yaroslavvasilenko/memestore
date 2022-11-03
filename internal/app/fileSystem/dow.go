@@ -7,22 +7,35 @@ import (
 	"net/http"
 	"os"
 
-	log "github.com/sirupsen/logrus"
+	"memestore/pkg/mongodb"
 )
 
-type IDowload interface {
-	DownloadFile()
+const (
+	documentPath = "./store/document/"
+	audioPath    = "./store/audio/"
+)
+
+type IFile interface {
+	DownloadFile() error
+	InsertDB(m *mongodb.Collection) error
 }
 
-func Dowl(id string, path string) {
-	resp, _ := http.Get(id)
+func dowl(id string, path string) error {
+	resp, err := http.Get(id)
+	if err != nil {
+		return err
+	}
 	defer resp.Body.Close()
 	out, err := os.Create(path)
+	if err != nil {
+		return err
+	}
 	defer out.Close()
 	_, err = io.Copy(out, resp.Body)
 	if err != nil {
-		log.Error(err)
+		return err
 	}
+	return nil
 }
 
 func makeRandom() string {

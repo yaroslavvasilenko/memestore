@@ -5,25 +5,25 @@ import (
 	"memestore/internal/app/fileSystem"
 )
 
-func (app *App) anyDow(id string) string {
+func (app *App) linkForDownload(id string) string {
 	file := tgbotapi.FileConfig{
 		FileID: id,
 	}
 
 	f, _ := app.Bot.GetFile(file)
-	return f.Link("5496447413:AAENVSjTJw_3Uk7CUEzoNX23XC185eY7hH8")
+	return f.Link(app.TokenBot)
 }
 
-func (app *App) makeTypeDownload(m *tgbotapi.Message) fileSystem.IDowload {
+func (app *App) makeTypeFile(m *tgbotapi.Message) fileSystem.IFile {
 	if m.Document != nil {
 		return &fileSystem.Document{
-			ID:   app.anyDow(m.Document.FileID),
+			ID:   app.linkForDownload(m.Document.FileID),
 			Name: m.Document.FileName,
 			Size: m.Document.FileSize,
 		}
 	} else if m.Audio != nil {
 		return &fileSystem.Audio{
-			ID:   app.anyDow(m.Audio.FileID),
+			ID:   app.linkForDownload(m.Audio.FileID),
 			Name: m.Audio.FileName,
 			Size: m.Audio.FileSize,
 		}

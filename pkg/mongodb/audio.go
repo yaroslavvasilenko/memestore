@@ -1,11 +1,19 @@
 package mongodb
 
-import "go.mongodb.org/mongo-driver/mongo"
+import (
+	"context"
 
-type DocCollection struct {
+	"go.mongodb.org/mongo-driver/mongo"
+)
+
+type AudioCollection struct {
 	handle *mongo.Collection
 }
 
-func NewDocCollection(handle *mongo.Collection) *DocCollection {
-	return &DocCollection{handle: handle}
+func (d *AudioCollection) InsertAudio(str interface{}) error {
+	_, err := d.handle.InsertOne(context.Background(), str)
+	if err != nil {
+		return err
+	}
+	return nil
 }

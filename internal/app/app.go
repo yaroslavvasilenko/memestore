@@ -15,6 +15,7 @@ import (
 type App struct {
 	Db       *mongodb.Database
 	Bot      *tgbotapi.BotAPI
+	TokenBot string
 	MessChan *tgbotapi.UpdatesChannel
 	LogFile  *os.File
 }
@@ -38,6 +39,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	app := &App{
 		Db:       mdb,
 		Bot:      bApi,
+		TokenBot: cfg.TeleToken,
 		MessChan: mesChan,
 		LogFile:  logF,
 	}
@@ -61,9 +63,17 @@ func (app *App) Run() {
 				log.Info("%s", m)
 			}
 		} else {
-			file := app.makeTypeDownload(update.Message)
-			file.DownloadFile()
-
+			file := app.makeTypeFile(update.Message)
+			err := file.DownloadFile()
+			if err != nil {
+				msg := tgbotapi.NewMessage(update.Message.Chat.ID, err.Error())
+				app.Bot.Send(msg)
+				log.Debug(err)
+			}
+			err = file.InsertDB(app.Db.Collection)
+			if err != nil {
+				log.Debug(err)
+			}
 		}
 	}
 }

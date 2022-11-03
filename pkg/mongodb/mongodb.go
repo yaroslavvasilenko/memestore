@@ -36,8 +36,8 @@ func InitMongo() (*Database, error) {
 	dbAndCol := &Database{
 		Client: client,
 		Collection: &Collection{
-			Audio: NewAudioCollection(db.Collection("audio")),
-			Doc:   NewDocCollection(db.Collection("document")),
+			Audio: &AudioCollection{handle: db.Collection("audio")},
+			Doc:   &DocCollection{handle: db.Collection("document")},
 		},
 	}
 
