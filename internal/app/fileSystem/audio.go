@@ -6,16 +6,19 @@ import (
 
 type Audio struct {
 	IFile
-	ID   string
-	Name string
-	Size int
+	ID     string
+	DBName string
+	Name   string
+	Size   int
 }
 
 func (a *Audio) DownloadFile() error {
-	err := dowl(a.ID, audioPath+makeRandom())
+	randName := makeRandom()
+	err := downloadAny(a.ID, audioPath+randName)
 	if err != nil {
 		return err
 	}
+	a.DBName = randName
 	return nil
 }
 

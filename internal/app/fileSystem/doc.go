@@ -6,16 +6,19 @@ import (
 
 type Document struct {
 	IFile
-	ID   string
-	Name string
-	Size int
+	ID     string
+	DBName string
+	Name   string
+	Size   int
 }
 
 func (d *Document) DownloadFile() error {
-	err := dowl(d.ID, documentPath+makeRandom())
+	randName := makeRandom()
+	err := downloadAny(d.ID, documentPath+randName)
 	if err != nil {
 		return err
 	}
+	d.DBName = randName
 	return nil
 }
 

@@ -20,7 +20,7 @@ type IFile interface {
 	InsertDB(m *mongodb.Collection) error
 }
 
-func dowl(id string, path string) error {
+func downloadAny(id string, path string) error {
 	resp, err := http.Get(id)
 	if err != nil {
 		return err
