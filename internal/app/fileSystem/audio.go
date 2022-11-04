@@ -5,7 +5,7 @@ import (
 )
 
 type Audio struct {
-	IFile
+	ITypeFile
 	ID     string
 	DBName string
 	Name   string

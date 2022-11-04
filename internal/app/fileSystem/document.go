@@ -5,7 +5,7 @@ import (
 )
 
 type Document struct {
-	IFile
+	ITypeFile
 	ID     string
 	DBName string
 	Name   string

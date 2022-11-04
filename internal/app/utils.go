@@ -14,7 +14,7 @@ func (app *App) linkForDownload(id string) string {
 	return f.Link(app.TokenBot)
 }
 
-func (app *App) makeTypeFile(m *tgbotapi.Message) fileSystem.IFile {
+func (app *App) makeTypeFile(m *tgbotapi.Message) fileSystem.ITypeFile {
 	if m.Document != nil {
 		return &fileSystem.Document{
 			ID:   app.linkForDownload(m.Document.FileID),

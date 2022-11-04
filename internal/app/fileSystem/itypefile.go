@@ -15,7 +15,7 @@ const (
 	audioPath    = "./store/audio/"
 )
 
-type IFile interface {
+type ITypeFile interface {
 	DownloadFile() error
 	InsertDB(m *mongodb.Collection) error
 }
