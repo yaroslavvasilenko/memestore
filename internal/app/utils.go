@@ -3,6 +3,7 @@ package app
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"memestore/internal/app/fileSystem"
+	"memestore/pkg/mongodb"
 )
 
 func (app *App) linkForDownload(id string) string {
@@ -29,4 +30,13 @@ func (app *App) makeTypeFile(m *tgbotapi.Message) fileSystem.ITypeFile {
 		}
 	}
 	return nil
+}
+
+func (app *App) execUser(userID int64) bool {
+	user := mongodb.User{ID: userID}
+	tx := app.Db.First(&user)
+	if tx.RowsAffected != 1 {
+		return false
+	}
+	return true
 }

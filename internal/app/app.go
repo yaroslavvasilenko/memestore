@@ -5,6 +5,7 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	log "github.com/sirupsen/logrus"
+	"gorm.io/gorm"
 	"memestore/pkg/config"
 	"memestore/pkg/logging"
 
@@ -13,7 +14,7 @@ import (
 )
 
 type App struct {
-	Db       *mongodb.Database
+	Db       *gorm.DB
 	Bot      *tgbotapi.BotAPI
 	TokenBot string
 	MessChan *tgbotapi.UpdatesChannel
@@ -63,16 +64,34 @@ func (app *App) Run() {
 				log.Info("%s", m)
 			}
 		} else {
+			userID := update.Message.From.ID
 			file := app.makeTypeFile(update.Message)
-			err := file.DownloadFile()
-			if err != nil {
-				msg := tgbotapi.NewMessage(update.Message.Chat.ID, err.Error())
-				app.Bot.Send(msg)
-				log.Debug(err)
+
+			if app.execUser(userID) == false {
+				tx := app.Db.Create(&mongodb.User{
+					ID:        userID,
+					SizeStore: 0,
+				})
+				if tx.Error != nil {
+					log.Debug(tx.Error)
+				}
+				return
 			}
-			err = file.InsertDB(app.Db.Collection)
+
+			err := file.InsertDB(app.Db, userID)
 			if err != nil {
 				log.Debug(err)
+				return
+			}
+
+			err = file.DownloadFile()
+			if err != nil {
+				log.Debug(err)
+
+				err = file.DeleteDB(app.Db, userID)
+				if err != nil {
+					log.Debug(err)
+				}
 			}
 		}
 	}

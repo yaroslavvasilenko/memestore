@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"os"
 
-	"memestore/pkg/mongodb"
+	"gorm.io/gorm"
 )
 
 const (
@@ -17,7 +17,8 @@ const (
 
 type ITypeFile interface {
 	DownloadFile() error
-	InsertDB(m *mongodb.Collection) error
+	InsertDB(db *gorm.DB, idUser int64) error
+	DeleteDB(db *gorm.DB, idUser int64) error
 }
 
 func downloadAny(id string, path string) error {

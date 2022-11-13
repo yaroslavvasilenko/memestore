@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+
 	cfg, err := config.GetConf()
 	if err != nil {
 		log.Fatal(err)
