@@ -17,8 +17,8 @@ const (
 
 type ITypeFile interface {
 	DownloadFile() error
-	InsertDB(db *gorm.DB, idUser int64) error
-	DeleteDB(db *gorm.DB, idUser int64) error
+	InsertDB(db *gorm.DB, idUser int) error
+	DeleteDB(db *gorm.DB, idUser int) error
 }
 
 func downloadAny(id string, path string) error {

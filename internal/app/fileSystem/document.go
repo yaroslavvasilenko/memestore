@@ -22,7 +22,7 @@ func (d *Document) DownloadFile() error {
 	return nil
 }
 
-func (d *Document) InsertDB(db *gorm.DB, idUser int64) error {
+func (d *Document) InsertDB(db *gorm.DB, idUser int) error {
 	tx := db.Create(mongodb.Document{
 		ID:     d.ID,
 		Name:   d.Name,
@@ -44,7 +44,7 @@ func (d *Document) InsertDB(db *gorm.DB, idUser int64) error {
 	return nil
 }
 
-func (d *Document) DeleteDB(db *gorm.DB, idUser int64) error {
+func (d *Document) DeleteDB(db *gorm.DB, idUser int) error {
 	tx := db.Delete(mongodb.Document{
 		ID:     d.ID,
 		Name:   d.Name,

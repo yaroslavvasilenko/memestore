@@ -22,7 +22,7 @@ func (a *Audio) DownloadFile() error {
 	return nil
 }
 
-func (a *Audio) InsertDB(db *gorm.DB, idUser int64) error {
+func (a *Audio) InsertDB(db *gorm.DB, idUser int) error {
 	tx := db.Create(mongodb.Audio{
 		ID:     a.ID,
 		Name:   a.Name,
@@ -44,7 +44,7 @@ func (a *Audio) InsertDB(db *gorm.DB, idUser int64) error {
 	return nil
 }
 
-func (a *Audio) DeleteDB(db *gorm.DB, idUser int64) error {
+func (a *Audio) DeleteDB(db *gorm.DB, idUser int) error {
 	tx := db.Delete(mongodb.Document{
 		ID:     a.ID,
 		Name:   a.Name,

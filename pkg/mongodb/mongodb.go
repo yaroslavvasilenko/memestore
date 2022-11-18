@@ -9,14 +9,14 @@ type Audio struct {
 	ID     string `gorm:"primaryKey"`
 	Name   string
 	Size   int
-	IdUser int64
+	IdUser int
 }
 
 type Document struct {
 	ID     string `gorm:"primaryKey"`
 	Name   string
 	Size   int
-	IdUser int64
+	IdUser int
 }
 
 type Video struct {
@@ -50,7 +50,7 @@ type Music struct {
 }
 
 type User struct {
-	ID        int64 `gorm:"primaryKey"`
+	ID        int `gorm:"primaryKey"`
 	SizeStore int
 }
 

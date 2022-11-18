@@ -1,7 +1,7 @@
 package app
 
 import (
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"memestore/internal/app/fileSystem"
 	"memestore/pkg/mongodb"
 )
@@ -25,14 +25,14 @@ func (app *App) makeTypeFile(m *tgbotapi.Message) fileSystem.ITypeFile {
 	} else if m.Audio != nil {
 		return &fileSystem.Audio{
 			ID:   app.linkForDownload(m.Audio.FileID),
-			Name: m.Audio.FileName,
+			Name: m.Audio.Title,
 			Size: m.Audio.FileSize,
 		}
 	}
 	return nil
 }
 
-func (app *App) execUser(userID int64) bool {
+func (app *App) execUser(userID int) bool {
 	user := mongodb.User{ID: userID}
 	tx := app.Db.First(&user)
 	if tx.RowsAffected != 1 {

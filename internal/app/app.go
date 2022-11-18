@@ -3,7 +3,7 @@ package app
 import (
 	"os"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"memestore/pkg/config"
@@ -50,49 +50,61 @@ func NewApp(cfg *config.Config) (*App, error) {
 
 func (app *App) Run() {
 	for update := range *app.MessChan {
-		if update.Message.Text != "" { // If we got app message
-			log.WithFields(log.Fields{
-				"userName": update.Message.From.UserName,
-				"mess":     update.Message.Text}).Info("mess user")
+		if update.InlineQuery != nil && update.InlineQuery.Query != "" {
+			app.myInlineQuery(update)
+		} else if update.Message != nil {
+			app.myInsertFile(update)
+		}
+	}
+}
 
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
+func (app *App) myInlineQuery(update tgbotapi.Update) {
+	article := tgbotapi.NewInlineQueryResultArticle(update.InlineQuery.ID, "Echo", update.InlineQuery.Query)
+	article.Description = update.InlineQuery.Query
 
-			msg.ReplyToMessageID = update.Message.MessageID
+	inlineConf := tgbotapi.InlineConfig{
+		InlineQueryID: update.InlineQuery.ID,
+		IsPersonal:    true,
+		CacheTime:     0,
+		Results:       []interface{}{article},
+	}
 
-			m, err := app.Bot.Send(msg)
-			if err != nil {
-				log.Info("%s", m)
-			}
-		} else {
-			userID := update.Message.From.ID
-			file := app.makeTypeFile(update.Message)
+	if _, err := app.Bot.AnswerInlineQuery(inlineConf); err != nil {
+		log.Debug(err)
+	}
+}
 
-			if app.execUser(userID) == false {
-				tx := app.Db.Create(&mongodb.User{
-					ID:        userID,
-					SizeStore: 0,
-				})
-				if tx.Error != nil {
-					log.Debug(tx.Error)
-				}
-				return
-			}
+func (app *App) myInsertFile(update tgbotapi.Update) {
+	userID := update.Message.From.ID
+	file := app.makeTypeFile(update.Message)
+	if file == nil {
+		return
+	}
 
-			err := file.InsertDB(app.Db, userID)
-			if err != nil {
-				log.Debug(err)
-				return
-			}
+	if app.execUser(userID) == false {
+		tx := app.Db.Create(&mongodb.User{
+			ID:        userID,
+			SizeStore: 0,
+		})
+		if tx.Error != nil {
+			log.Debug(tx.Error)
+		}
+		return
+	}
 
-			err = file.DownloadFile()
-			if err != nil {
-				log.Debug(err)
+	err := file.InsertDB(app.Db, userID)
+	if err != nil {
+		log.Debug(err)
+		return
+	}
 
-				err = file.DeleteDB(app.Db, userID)
-				if err != nil {
-					log.Debug(err)
-				}
-			}
+	err = file.DownloadFile()
+	if err != nil {
+		log.Debug(err)
+
+		err = file.DeleteDB(app.Db, userID)
+		if err != nil {
+			log.Debug(err)
 		}
 	}
 }
