@@ -1,15 +1,15 @@
 package fileSystem
 
 import (
+	"gorm.io/gorm"
 	"memestore/pkg/mongodb"
 )
 
 type Document struct {
 	ITypeFile
-	ID     string
-	DBName string
-	Name   string
-	Size   int
+	ID   string
+	Name string
+	Size int
 }
 
 func (d *Document) DownloadFile() error {
@@ -18,23 +18,50 @@ func (d *Document) DownloadFile() error {
 	if err != nil {
 		return err
 	}
-	d.DBName = randName
+	d.ID = randName
 	return nil
 }
 
-func (d *Document) InsertDB(m *mongodb.Collection) error {
-	doc := struct {
-		Id   string `bson:"id_file"`
-		Name string `bson:"name"`
-		Size int    `bson:"size"`
-	}{
-		d.ID,
-		d.Name,
-		d.Size,
+func (d *Document) InsertDB(db *gorm.DB, idUser int64) error {
+	tx := db.Create(mongodb.Document{
+		ID:     d.ID,
+		Name:   d.Name,
+		Size:   d.Size,
+		IdUser: idUser,
+	})
+	if tx.Error != nil {
+		return tx.Error
 	}
-	err := m.Doc.InsertDoc(doc)
-	if err != nil {
-		return err
+
+	tx = db.Exec(
+		`UPDATE users 
+			SET size_store = size_store + ? 
+			WHERE id = ?`, d.Size, idUser)
+	if tx.Error != nil {
+		return tx.Error
 	}
+
+	return nil
+}
+
+func (d *Document) DeleteDB(db *gorm.DB, idUser int64) error {
+	tx := db.Delete(mongodb.Document{
+		ID:     d.ID,
+		Name:   d.Name,
+		Size:   d.Size,
+		IdUser: idUser,
+	})
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	tx = db.Exec(
+		`UPDATE users 
+			SET size_store = size_store - ? 
+			WHERE id = ?`, d.Size, idUser)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
 	return nil
 }

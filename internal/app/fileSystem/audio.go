@@ -1,15 +1,15 @@
 package fileSystem
 
 import (
+	"gorm.io/gorm"
 	"memestore/pkg/mongodb"
 )
 
 type Audio struct {
 	ITypeFile
-	ID     string
-	DBName string
-	Name   string
-	Size   int
+	ID   string
+	Name string
+	Size int
 }
 
 func (a *Audio) DownloadFile() error {
@@ -18,23 +18,50 @@ func (a *Audio) DownloadFile() error {
 	if err != nil {
 		return err
 	}
-	a.DBName = randName
+	a.ID = randName
 	return nil
 }
 
-func (a *Audio) InsertDB(m *mongodb.Collection) error {
-	audio := struct {
-		Id   string
-		Name string
-		Size int
-	}{
-		a.ID,
-		a.Name,
-		a.Size,
+func (a *Audio) InsertDB(db *gorm.DB, idUser int64) error {
+	tx := db.Create(mongodb.Audio{
+		ID:     a.ID,
+		Name:   a.Name,
+		Size:   a.Size,
+		IdUser: idUser,
+	})
+	if tx.Error != nil {
+		return tx.Error
 	}
-	err := m.Audio.InsertAudio(audio)
-	if err != nil {
-		return err
+
+	tx = db.Exec(
+		`UPDATE users
+			SET size_store = size_store + ? 
+			WHERE id = ?`, a.Size, idUser)
+	if tx.Error != nil {
+		return tx.Error
 	}
+
+	return nil
+}
+
+func (a *Audio) DeleteDB(db *gorm.DB, idUser int64) error {
+	tx := db.Delete(mongodb.Document{
+		ID:     a.ID,
+		Name:   a.Name,
+		Size:   a.Size,
+		IdUser: idUser,
+	})
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	tx = db.Exec(
+		`UPDATE users 
+			SET size_store = size_store - ? 
+			WHERE id = ?`, a.Size, idUser)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
 	return nil
 }
