@@ -59,7 +59,11 @@ func (app *App) Run() {
 }
 
 func (app *App) myInlineQuery(update tgbotapi.Update) {
-	article := tgbotapi.NewInlineQueryResultArticle(update.InlineQuery.ID, "Echo", update.InlineQuery.Query)
+	name, b, c := mongodb.FindFile(app.Db, update.InlineQuery.Query, update.InlineQuery.From.ID)
+
+	log.Println(name, b, c)
+	tgbotapi.NewInlineQueryResultDocument(update.InlineQuery.ID, "Echo", name)
+	article := tgbotapi.NewInlineQueryResultArticle(update.InlineQuery.ID, "Echo", name)
 	article.Description = update.InlineQuery.Query
 
 	inlineConf := tgbotapi.InlineConfig{

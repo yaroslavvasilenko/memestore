@@ -54,7 +54,6 @@ func (d *Document) DeleteDB(db *gorm.DB, idUser int) error {
 	if tx.Error != nil {
 		return tx.Error
 	}
-
 	tx = db.Exec(
 		`UPDATE users 
 			SET size_store = size_store - ? 
