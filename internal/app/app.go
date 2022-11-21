@@ -9,7 +9,7 @@ import (
 	"memestore/pkg/config"
 	"memestore/pkg/logging"
 
-	"memestore/pkg/mongodb"
+	"memestore/pkg/postgres"
 	"memestore/pkg/telegramapi"
 )
 
@@ -26,7 +26,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-	mdb, err := mongodb.InitMongo()
+	mdb, err := postgres.InitMongo()
 	if err != nil {
 		return nil, err
 	}
@@ -59,10 +59,9 @@ func (app *App) Run() {
 }
 
 func (app *App) myInlineQuery(update tgbotapi.Update) {
-	name, b, c := mongodb.FindFile(app.Db, update.InlineQuery.Query, update.InlineQuery.From.ID)
+	name, b, c := postgres.FindFile(app.Db, update.InlineQuery.Query, update.InlineQuery.From.ID)
 
 	log.Println(name, b, c)
-	tgbotapi.NewInlineQueryResultDocument(update.InlineQuery.ID, "Echo", name)
 	article := tgbotapi.NewInlineQueryResultArticle(update.InlineQuery.ID, "Echo", name)
 	article.Description = update.InlineQuery.Query
 
@@ -82,33 +81,28 @@ func (app *App) myInsertFile(update tgbotapi.Update) {
 	userID := update.Message.From.ID
 	file := app.makeTypeFile(update.Message)
 	if file == nil {
+		log.Debug("no type file")
 		return
 	}
 
 	if app.execUser(userID) == false {
-		tx := app.Db.Create(&mongodb.User{
+		tx := app.Db.Create(&postgres.User{
 			ID:        userID,
 			SizeStore: 0,
 		})
 		if tx.Error != nil {
 			log.Debug(tx.Error)
+			return
 		}
-		return
 	}
 
-	err := file.InsertDB(app.Db, userID)
-	if err != nil {
+	if err := file.InsertDB(app.Db, userID); err != nil {
 		log.Debug(err)
 		return
 	}
 
-	err = file.DownloadFile()
-	if err != nil {
+	if err := file.DeleteDB(app.Db, userID); err != nil {
 		log.Debug(err)
-
-		err = file.DeleteDB(app.Db, userID)
-		if err != nil {
-			log.Debug(err)
-		}
 	}
+
 }

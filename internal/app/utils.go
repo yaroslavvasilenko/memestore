@@ -3,7 +3,7 @@ package app
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"memestore/internal/app/fileSystem"
-	"memestore/pkg/mongodb"
+	"memestore/pkg/postgres"
 )
 
 func (app *App) linkForDownload(id string) string {
@@ -33,7 +33,7 @@ func (app *App) makeTypeFile(m *tgbotapi.Message) fileSystem.ITypeFile {
 }
 
 func (app *App) execUser(userID int) bool {
-	user := mongodb.User{ID: userID}
+	user := postgres.User{ID: userID}
 	tx := app.Db.First(&user)
 	if tx.RowsAffected != 1 {
 		return false
