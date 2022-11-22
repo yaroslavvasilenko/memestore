@@ -1,13 +1,12 @@
 package app
 
 import (
-	"os"
-
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"memestore/pkg/config"
 	"memestore/pkg/logging"
+	"os"
 
 	"memestore/pkg/postgres"
 	"memestore/pkg/telegramapi"
@@ -59,10 +58,13 @@ func (app *App) Run() {
 }
 
 func (app *App) myInlineQuery(update tgbotapi.Update) {
-	name, b, c := postgres.FindFile(app.Db, update.InlineQuery.Query, update.InlineQuery.From.ID)
+	_, err := postgres.FindFile(app.Db, update.InlineQuery.Query, update.InlineQuery.From.ID)
+	if err != nil {
+		//  ToDO: make msg "file not found"
+		return
+	}
 
-	log.Println(name, b, c)
-	article := tgbotapi.NewInlineQueryResultArticle(update.InlineQuery.ID, "Echo", name)
+	article := tgbotapi.NewInlineQueryResultArticle(update.InlineQuery.ID, "Echo", "file find")
 	article.Description = update.InlineQuery.Query
 
 	inlineConf := tgbotapi.InlineConfig{
@@ -95,14 +97,18 @@ func (app *App) myInsertFile(update tgbotapi.Update) {
 			return
 		}
 	}
-
+	if err := file.DownloadFile(); err != nil {
+		log.Debug(err)
+		return
+	}
 	if err := file.InsertDB(app.Db, userID); err != nil {
 		log.Debug(err)
 		return
 	}
 
-	if err := file.DeleteDB(app.Db, userID); err != nil {
+	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "File downloaded")
+	_, err := app.Bot.Send(msg)
+	if err != nil {
 		log.Debug(err)
 	}
-
 }

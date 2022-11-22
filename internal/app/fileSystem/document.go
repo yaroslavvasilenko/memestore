@@ -24,10 +24,11 @@ func (d *Document) DownloadFile() error {
 
 func (d *Document) InsertDB(db *gorm.DB, idUser int) error {
 	tx := db.Create(postgres.File{
-		ID:     d.ID,
-		Name:   d.Name,
-		Size:   d.Size,
-		IdUser: idUser,
+		ID:       d.ID,
+		Name:     d.Name,
+		Size:     d.Size,
+		IdUser:   idUser,
+		TypeFile: postgres.TyDocument,
 	})
 	if tx.Error != nil {
 		return tx.Error

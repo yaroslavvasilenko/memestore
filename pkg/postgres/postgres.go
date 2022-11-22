@@ -39,14 +39,14 @@ func InitMongo() (*gorm.DB, error) {
 	return db, err
 }
 
-func FindFile(db *gorm.DB, name string, idUser int) (string, int, error) {
+func FindFile(db *gorm.DB, name string, idUser int) (*File, error) {
 	var result File
 	tx := db.Raw(
-		`SELECT name
+		`SELECT id, name, size, id_user, type_file
 			 FROM files
 			 WHERE id_user = ? and name = ?`, idUser, name).Scan(&result)
 	if tx.Error != nil {
-		return "", 0, tx.Error
+		return nil, tx.Error
 	}
-	return name, idUser, nil
+	return &result, nil
 }
