@@ -2,7 +2,7 @@ package fileSystem
 
 import (
 	"gorm.io/gorm"
-	"memestore/pkg/mongodb"
+	"memestore/pkg/postgres"
 )
 
 type Document struct {
@@ -22,12 +22,13 @@ func (d *Document) DownloadFile() error {
 	return nil
 }
 
-func (d *Document) InsertDB(db *gorm.DB, idUser int64) error {
-	tx := db.Create(mongodb.Document{
-		ID:     d.ID,
-		Name:   d.Name,
-		Size:   d.Size,
-		IdUser: idUser,
+func (d *Document) InsertDB(db *gorm.DB, idUser int) error {
+	tx := db.Create(postgres.File{
+		ID:       d.ID,
+		Name:     d.Name,
+		Size:     d.Size,
+		IdUser:   idUser,
+		TypeFile: postgres.TyDocument,
 	})
 	if tx.Error != nil {
 		return tx.Error
@@ -44,17 +45,17 @@ func (d *Document) InsertDB(db *gorm.DB, idUser int64) error {
 	return nil
 }
 
-func (d *Document) DeleteDB(db *gorm.DB, idUser int64) error {
-	tx := db.Delete(mongodb.Document{
-		ID:     d.ID,
-		Name:   d.Name,
-		Size:   d.Size,
-		IdUser: idUser,
+func (d *Document) DeleteDB(db *gorm.DB, idUser int) error {
+	tx := db.Delete(postgres.File{
+		ID:       d.ID,
+		Name:     d.Name,
+		Size:     d.Size,
+		IdUser:   idUser,
+		TypeFile: postgres.TyDocument,
 	})
 	if tx.Error != nil {
 		return tx.Error
 	}
-
 	tx = db.Exec(
 		`UPDATE users 
 			SET size_store = size_store - ? 

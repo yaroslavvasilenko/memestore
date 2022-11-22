@@ -1,7 +1,7 @@
 package telegramapi
 
 import (
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"memestore/pkg/config"
 )
 
@@ -16,7 +16,10 @@ func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, er
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
 
-	updates := bot.GetUpdatesChan(u)
+	updates, err := bot.GetUpdatesChan(u)
+	if err != nil {
+		return nil, nil, err
+	}
 
 	return bot, &updates, err
 }

@@ -1,15 +1,14 @@
 package app
 
 import (
-	"os"
-
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"memestore/pkg/config"
 	"memestore/pkg/logging"
+	"os"
 
-	"memestore/pkg/mongodb"
+	"memestore/pkg/postgres"
 	"memestore/pkg/telegramapi"
 )
 
@@ -26,7 +25,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-	mdb, err := mongodb.InitMongo()
+	mdb, err := postgres.InitMongo()
 	if err != nil {
 		return nil, err
 	}
@@ -50,49 +49,66 @@ func NewApp(cfg *config.Config) (*App, error) {
 
 func (app *App) Run() {
 	for update := range *app.MessChan {
-		if update.Message.Text != "" { // If we got app message
-			log.WithFields(log.Fields{
-				"userName": update.Message.From.UserName,
-				"mess":     update.Message.Text}).Info("mess user")
-
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-
-			msg.ReplyToMessageID = update.Message.MessageID
-
-			m, err := app.Bot.Send(msg)
-			if err != nil {
-				log.Info("%s", m)
-			}
-		} else {
-			userID := update.Message.From.ID
-			file := app.makeTypeFile(update.Message)
-
-			if app.execUser(userID) == false {
-				tx := app.Db.Create(&mongodb.User{
-					ID:        userID,
-					SizeStore: 0,
-				})
-				if tx.Error != nil {
-					log.Debug(tx.Error)
-				}
-				return
-			}
-
-			err := file.InsertDB(app.Db, userID)
-			if err != nil {
-				log.Debug(err)
-				return
-			}
-
-			err = file.DownloadFile()
-			if err != nil {
-				log.Debug(err)
-
-				err = file.DeleteDB(app.Db, userID)
-				if err != nil {
-					log.Debug(err)
-				}
-			}
+		if update.InlineQuery != nil && update.InlineQuery.Query != "" {
+			app.myInlineQuery(update)
+		} else if update.Message != nil {
+			app.myInsertFile(update)
 		}
+	}
+}
+
+func (app *App) myInlineQuery(update tgbotapi.Update) {
+	_, err := postgres.FindFile(app.Db, update.InlineQuery.Query, update.InlineQuery.From.ID)
+	if err != nil {
+		//  ToDO: make msg "file not found"
+		return
+	}
+
+	article := tgbotapi.NewInlineQueryResultArticle(update.InlineQuery.ID, "Echo", "file find")
+	article.Description = update.InlineQuery.Query
+
+	inlineConf := tgbotapi.InlineConfig{
+		InlineQueryID: update.InlineQuery.ID,
+		IsPersonal:    true,
+		CacheTime:     0,
+		Results:       []interface{}{article},
+	}
+
+	if _, err := app.Bot.AnswerInlineQuery(inlineConf); err != nil {
+		log.Debug(err)
+	}
+}
+
+func (app *App) myInsertFile(update tgbotapi.Update) {
+	userID := update.Message.From.ID
+	file := app.makeTypeFile(update.Message)
+	if file == nil {
+		log.Debug("no type file")
+		return
+	}
+
+	if app.execUser(userID) == false {
+		tx := app.Db.Create(&postgres.User{
+			ID:        userID,
+			SizeStore: 0,
+		})
+		if tx.Error != nil {
+			log.Debug(tx.Error)
+			return
+		}
+	}
+	if err := file.DownloadFile(); err != nil {
+		log.Debug(err)
+		return
+	}
+	if err := file.InsertDB(app.Db, userID); err != nil {
+		log.Debug(err)
+		return
+	}
+
+	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "File downloaded")
+	_, err := app.Bot.Send(msg)
+	if err != nil {
+		log.Debug(err)
 	}
 }

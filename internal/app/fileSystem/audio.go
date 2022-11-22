@@ -2,7 +2,7 @@ package fileSystem
 
 import (
 	"gorm.io/gorm"
-	"memestore/pkg/mongodb"
+	"memestore/pkg/postgres"
 )
 
 type Audio struct {
@@ -22,12 +22,13 @@ func (a *Audio) DownloadFile() error {
 	return nil
 }
 
-func (a *Audio) InsertDB(db *gorm.DB, idUser int64) error {
-	tx := db.Create(mongodb.Audio{
-		ID:     a.ID,
-		Name:   a.Name,
-		Size:   a.Size,
-		IdUser: idUser,
+func (a *Audio) InsertDB(db *gorm.DB, idUser int) error {
+	tx := db.Create(postgres.File{
+		ID:       a.ID,
+		Name:     a.Name,
+		Size:     a.Size,
+		IdUser:   idUser,
+		TypeFile: postgres.TyAudio,
 	})
 	if tx.Error != nil {
 		return tx.Error
@@ -44,8 +45,8 @@ func (a *Audio) InsertDB(db *gorm.DB, idUser int64) error {
 	return nil
 }
 
-func (a *Audio) DeleteDB(db *gorm.DB, idUser int64) error {
-	tx := db.Delete(mongodb.Document{
+func (a *Audio) DeleteDB(db *gorm.DB, idUser int) error {
+	tx := db.Delete(postgres.File{
 		ID:     a.ID,
 		Name:   a.Name,
 		Size:   a.Size,
