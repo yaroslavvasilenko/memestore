@@ -27,8 +27,8 @@ type User struct {
 	SizeStore int
 }
 
-func InitMongo() (*gorm.DB, error) {
-	dbURL := "postgres://pg:pass@172.17.0.3:5432"
+func PostgresInit(urlPostgres string) (*gorm.DB, error) {
+	dbURL := urlPostgres
 
 	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
 	if err != nil {

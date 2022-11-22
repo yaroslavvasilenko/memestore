@@ -7,10 +7,11 @@ import (
 )
 
 type Config struct {
-	TeleToken string
-	Debug     bool
-	LogPath   string
-	LogLevel  string
+	TeleToken   string
+	PostgresURL string
+	Debug       bool
+	LogPath     string
+	LogLevel    string
 }
 
 // GetConf returns a new Config struct
@@ -21,10 +22,11 @@ func GetConf() (*Config, error) {
 	}
 
 	cfg := &Config{
-		TeleToken: getVarEnv("TELEGRAM_TOKEN", ""),
-		Debug:     boolEnv(getVarEnv("DEBUG", "true")),
-		LogPath:   getVarEnv("LOG_PATH", "./log.txt"),
-		LogLevel:  getVarEnv("LOG_LEVEL", "info"),
+		TeleToken:   getVarEnv("TELEGRAM_TOKEN", ""),
+		PostgresURL: getVarEnv("POSTGRES_URL", ""),
+		Debug:       boolEnv(getVarEnv("DEBUG", "true")),
+		LogPath:     getVarEnv("LOG_PATH", "./log.txt"),
+		LogLevel:    getVarEnv("LOG_LEVEL", "info"),
 	}
 	return cfg, nil
 }
