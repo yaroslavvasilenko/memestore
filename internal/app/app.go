@@ -25,7 +25,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	if err != nil {
 		return nil, err
 	}
-	mdb, err := postgres.InitMongo()
+	mdb, err := postgres.PostgresInit(cfg.PostgresURL)
 	if err != nil {
 		return nil, err
 	}
