@@ -12,6 +12,7 @@ type Config struct {
 	Debug       bool
 	LogPath     string
 	LogLevel    string
+	Webhook     bool
 }
 
 // GetConf returns a new Config struct
@@ -27,6 +28,7 @@ func GetConf() (*Config, error) {
 		Debug:       boolEnv(getVarEnv("DEBUG", "true")),
 		LogPath:     getVarEnv("LOG_PATH", "./log.txt"),
 		LogLevel:    getVarEnv("LOG_LEVEL", "info"),
+		Webhook:     boolEnv(getVarEnv("WEBHOOK_BOOL", "true")),
 	}
 	return cfg, nil
 }
