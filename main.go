@@ -14,12 +14,12 @@ func main() {
 	}
 	log.Info("config initializing")
 
-	app, err := app.NewApp(cfg)
+	myApp, err := app.NewApp(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	log.Info("Bot polling started")
 
-	app.Run()
+	myApp.Run()
 }
