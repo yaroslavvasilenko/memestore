@@ -14,7 +14,7 @@ func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, er
 	}
 
 	bot.Debug = cfg.Debug //  debug or no
-	if cfg.Webhook != true {
+	if cfg.Webhook == true {
 		log.Info("Authorized on account %s", bot.Self.UserName)
 
 		_, err := bot.SetWebhook(tgbotapi.NewWebhookWithCert("https://memestore.onrender.com/"+bot.Token, "cert.pem"))
