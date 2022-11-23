@@ -23,6 +23,7 @@ func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, er
 		}
 
 		info, err := bot.GetWebhookInfo()
+		log.Info(info)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -32,7 +33,7 @@ func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, er
 		}
 
 		updates := bot.ListenForWebhook("/" + bot.Token)
-		go http.ListenAndServeTLS("0.0.0.0:8443", "cert.pem", "key.pem", nil)
+		go http.ListenAndServe("0.0.0.0:8443", nil)
 		return bot, &updates, nil
 
 	} else {
