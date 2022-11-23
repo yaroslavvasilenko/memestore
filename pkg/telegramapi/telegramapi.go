@@ -13,6 +13,8 @@ func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, er
 		return nil, nil, err
 	}
 
+	bot.RemoveWebhook()
+
 	bot.Debug = cfg.Debug //  debug or no
 	if cfg.Webhook == true {
 		log.Info("Authorized on account %s", bot.Self.UserName)
