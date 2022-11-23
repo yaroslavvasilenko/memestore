@@ -33,7 +33,7 @@ func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, er
 		}
 
 		updates := bot.ListenForWebhook("/" + bot.Token)
-		go http.ListenAndServe("0.0.0.0:8443", nil)
+		go http.ListenAndServe("0.0.0.0:443", nil)
 		return bot, &updates, nil
 
 	} else {
