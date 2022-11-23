@@ -1,6 +1,6 @@
 */log.txt
 */go.sum
-*/.env
+.env
 */.get
 */.idea
 */.store
