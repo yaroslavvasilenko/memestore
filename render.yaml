@@ -1,0 +1,13 @@
+services:
+  # A Docker web service
+  - type: web
+    name: MemeStore
+    env: docker
+    repo: https://github.com/yaroslavvasilenko/memestore.git # optional
+    region: oregon # optional (defaults to oregon)
+    plan: starter # optional (defaults to starter)
+    branch: env_add_postgresURL # optional (defaults to master)
+    rootDir: ./
+    dockerCommand: ./dockerfile
+    numInstances: 1
+    healthCheckPath: /
