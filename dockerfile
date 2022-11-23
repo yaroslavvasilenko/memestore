@@ -8,4 +8,6 @@ WORKDIR /app
 
 RUN go build -o server .
 
+RUN mkdir "store" && mkdir "store/document" && mkdir "store/audio"
+
 CMD [ "/app/server" ]
