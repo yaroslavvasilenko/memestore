@@ -20,7 +20,7 @@ func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, er
 	if cfg.Webhook == true {
 		log.Info("Start on webhook")
 
-		_, err := bot.SetWebhook(tgbotapi.NewWebhook("https://memestore.onrender.com/" + bot.Token))
+		_, err := bot.SetWebhook(tgbotapi.NewWebhook("https://memestore.onrender.com:443/" + bot.Token))
 		if err != nil {
 			return nil, nil, err
 		}
