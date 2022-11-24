@@ -5,6 +5,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"memestore/pkg/config"
 	"net/http"
+	"time"
 )
 
 func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, error) {
@@ -14,10 +15,10 @@ func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, er
 	}
 
 	bot.RemoveWebhook()
-
+	time.Sleep(time.Second * 5)
 	bot.Debug = cfg.Debug //  debug or no
 	if cfg.Webhook == true {
-		log.Info("Authorized on account %s", bot.Self.UserName)
+		log.Info("Start on webhook")
 
 		_, err := bot.SetWebhook(tgbotapi.NewWebhook("https://memestore.onrender.com/" + bot.Token))
 		if err != nil {
@@ -39,6 +40,7 @@ func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, er
 		return bot, &updates, nil
 
 	} else {
+		log.Info("Start on longpoll")
 		u := tgbotapi.NewUpdate(0)
 		u.Timeout = 60
 
