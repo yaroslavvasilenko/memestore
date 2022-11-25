@@ -36,8 +36,7 @@ func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, er
 		}
 
 		updates := bot.ListenForWebhook("/" + bot.Token)
-
-		go myListServ()
+		go http.ListenAndServe("127.0.0.1:8443", nil)
 
 		return bot, &updates, nil
 
@@ -54,9 +53,4 @@ func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, er
 		return bot, &updates, nil
 	}
 
-}
-
-func myListServ() {
-	err := http.ListenAndServe("127.0.0.1:8443", nil)
-	log.Info(err)
 }
