@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
@@ -58,11 +59,21 @@ func (app *App) Run() {
 }
 
 func (app *App) myInlineQuery(update tgbotapi.Update) {
-	_, err := postgres.FindFile(app.Db, update.InlineQuery.Query, update.InlineQuery.From.ID)
+	f, err := postgres.FindFile(app.Db, update.InlineQuery.Query, update.InlineQuery.From.ID)
 	if err != nil {
-		//  ToDO: make msg "file not found"
+		//  ToDO: make msg "file not found"?
 		return
 	}
+
+	file := makeTypeFileForDB(f)
+	if file == nil {
+		log.Debug("no type file")
+		return
+	}
+
+	url := fmt.Sprintf("http://127.0.0.1:4000/for_telegram?id_user=%s&id_file=%s", f.IdUser, f.Name)
+
+	file.AnswerInlineQuery(app.Bot, update.InlineQuery.ID, url, update.InlineQuery.Query)
 
 	article := tgbotapi.NewInlineQueryResultArticle(update.InlineQuery.ID, "Echo", "file find")
 	article.Description = update.InlineQuery.Query
@@ -106,9 +117,8 @@ func (app *App) myInsertFile(update tgbotapi.Update) {
 		return
 	}
 
-	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "File downloaded")
-	_, err := app.Bot.Send(msg)
-	if err != nil {
+	if err := app.sendMessageFast(update.Message.Chat.ID, "File downloaded"); err != nil {
 		log.Debug(err)
 	}
+
 }

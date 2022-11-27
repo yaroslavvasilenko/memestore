@@ -32,6 +32,39 @@ func (app *App) makeTypeFile(m *tgbotapi.Message) fileSystem.ITypeFile {
 	return nil
 }
 
+func makeTypeFileForDB(file *postgres.File) fileSystem.ITypeFile {
+	switch file.TypeFile {
+	case postgres.TyDocument:
+		return &fileSystem.Document{
+			ID:     file.ID,
+			Name:   file.Name,
+			Size:   file.Size,
+			IdUser: file.IdUser,
+		}
+
+	case postgres.TyAudio:
+		return &fileSystem.Audio{
+			ID:     file.ID,
+			Name:   file.Name,
+			Size:   file.Size,
+			IdUser: file.IdUser,
+		}
+	default:
+		return nil
+
+	}
+
+}
+
+func (app *App) sendMessageFast(chatID int64, textMessage string) error {
+	msg := tgbotapi.NewMessage(chatID, textMessage)
+	_, err := app.Bot.Send(msg)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (app *App) execUser(userID int) bool {
 	user := postgres.User{ID: userID}
 	tx := app.Db.First(&user)

@@ -7,14 +7,15 @@ import (
 
 type Audio struct {
 	ITypeFile
-	ID   string
-	Name string
-	Size int
+	ID     string
+	Name   string
+	Size   int
+	IdUser int
 }
 
 func (a *Audio) DownloadFile() error {
 	randName := makeRandom()
-	err := downloadAny(a.ID, audioPath+randName)
+	err := downloadAny(a.ID, filePath+randName)
 	if err != nil {
 		return err
 	}

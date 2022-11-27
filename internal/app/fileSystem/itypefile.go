@@ -2,6 +2,7 @@ package fileSystem
 
 import (
 	"crypto/rand"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"io"
 	"math/big"
 	"net/http"
@@ -11,14 +12,14 @@ import (
 )
 
 const (
-	documentPath = "./store/document/"
-	audioPath    = "./store/audio/"
+	filePath = "./store/"
 )
 
 type ITypeFile interface {
 	DownloadFile() error
 	InsertDB(db *gorm.DB, idUser int) error
 	DeleteDB(db *gorm.DB, idUser int) error
+	AnswerInlineQuery(bot *tgbotapi.BotAPI, inlineQueryId, url, description string) error
 }
 
 func downloadAny(id string, path string) error {
