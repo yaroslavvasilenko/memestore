@@ -16,7 +16,7 @@ type Document struct {
 
 func (d *Document) DownloadFile() error {
 	randName := makeRandom()
-	err := downloadAny(d.ID, filePath+randName)
+	err := downloadAny(d.ID, FilePath+randName)
 	if err != nil {
 		return err
 	}

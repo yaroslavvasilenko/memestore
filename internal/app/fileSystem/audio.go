@@ -15,7 +15,7 @@ type Audio struct {
 
 func (a *Audio) DownloadFile() error {
 	randName := makeRandom()
-	err := downloadAny(a.ID, filePath+randName)
+	err := downloadAny(a.ID, FilePath+randName)
 	if err != nil {
 		return err
 	}

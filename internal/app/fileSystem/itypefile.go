@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	filePath = "./store/"
+	FilePath = "./store/"
 )
 
 type ITypeFile interface {

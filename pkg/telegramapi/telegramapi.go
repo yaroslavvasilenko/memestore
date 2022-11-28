@@ -5,7 +5,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"memestore/pkg/config"
 	"net/http"
-	"time"
 )
 
 func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, error) {
@@ -15,7 +14,6 @@ func InitBot(cfg *config.Config) (*tgbotapi.BotAPI, *tgbotapi.UpdatesChannel, er
 	}
 
 	bot.RemoveWebhook()
-	time.Sleep(time.Second * 5)
 	bot.Debug = cfg.Debug //  debug or no
 	if cfg.Webhook == true {
 		log.Info("Start on webhook")

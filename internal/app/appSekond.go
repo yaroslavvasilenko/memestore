@@ -2,8 +2,9 @@ package app
 
 import (
 	log "github.com/sirupsen/logrus"
+	"memestore/internal/app/fileSystem"
 	"net/http"
-	"strconv"
+	"os"
 )
 
 func (app *App) ServerForLink() {
@@ -28,16 +29,17 @@ func (app *App) home(w http.ResponseWriter, r *http.Request) {
 
 func (app *App) getFile(w http.ResponseWriter, r *http.Request) {
 	idFile := r.URL.Query().Get("id_file")
-	idUser, err := strconv.Atoi(r.URL.Query().Get("id_user"))
+	idUser := r.URL.Query().Get("id_user")
+	log.Println(idFile, idUser)
+
+	f, err := os.ReadFile(fileSystem.FilePath + idFile)
 	if err != nil {
-		//  ToDO: err
+		log.Debug(err)
 		return
 	}
-	log.Println(idFile, idUser)
-	//f, err := postgres.FindFile(app.Db, idFile, idUser)
-	//if err != nil {
-	//	// ToDo: err
-	//}
-	//  просто напиши как отдавать файл
-
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/octet-stream")
+	//  ToDo: Need MIME type. Possibly - https://github.com/gabriel-vasile/mimetype
+	//   or write one yourself
+	w.Write(f)
 }
