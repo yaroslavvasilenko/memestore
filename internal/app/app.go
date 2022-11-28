@@ -61,12 +61,14 @@ func (app *App) Run() {
 
 func (app *App) myInlineQuery(update tgbotapi.Update) {
 	f, err := postgres.FindFile(app.Db, update.InlineQuery.Query, update.InlineQuery.From.ID)
+	log.Info("Find file")
 	if err != nil {
 		log.Debug(err, "file not found")
 		return
 	}
 
 	file := makeTypeFileForDB(f)
+	log.Info("Type file")
 	if file == nil {
 		log.Debug("no find file")
 		return
