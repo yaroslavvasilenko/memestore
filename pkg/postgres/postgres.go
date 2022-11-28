@@ -43,7 +43,7 @@ func PostgresInit(urlPostgres string) (*gorm.DB, error) {
 func FindFile(db *gorm.DB, nameFile string, idUser int) (*File, error) {
 	var result File
 	tx := db.Raw(
-		`SELECT id, name, size, id_user, type_file
+		`SELECT id, name, size, id_user, type_file, mime_type
 			 FROM files
 			 WHERE id_user = ? and name = ?`, idUser, nameFile).Scan(&result)
 	if tx.Error != nil {

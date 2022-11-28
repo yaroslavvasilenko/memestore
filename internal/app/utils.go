@@ -37,10 +37,11 @@ func makeTypeFileForDB(file *postgres.File) fileSystem.ITypeFile {
 	switch file.TypeFile {
 	case postgres.TyDocument:
 		return &fileSystem.Document{
-			ID:     file.ID,
-			Name:   file.Name,
-			Size:   file.Size,
-			IdUser: file.IdUser,
+			ID:       file.ID,
+			Name:     file.Name,
+			Size:     file.Size,
+			IdUser:   file.IdUser,
+			MimeType: file.MimeType,
 		}
 
 	case postgres.TyAudio:

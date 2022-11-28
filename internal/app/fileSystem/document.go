@@ -26,7 +26,7 @@ func (d *Document) DownloadFile() error {
 }
 
 func (d *Document) AnswerInlineQuery(bot *tgbotapi.BotAPI, inlineQueryId, url, description string) error {
-	inlineDocument := tgbotapi.NewInlineQueryResultDocument(inlineQueryId, url, "Your document", "mime/type")
+	inlineDocument := tgbotapi.NewInlineQueryResultDocument(inlineQueryId, url, "Your document", d.MimeType)
 	inlineDocument.Description = description
 	inlineConf := tgbotapi.InlineConfig{
 		InlineQueryID: inlineQueryId,
