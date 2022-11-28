@@ -28,6 +28,7 @@ func (app *App) home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *App) getFile(w http.ResponseWriter, r *http.Request) {
+	log.Info("Yes?")
 	idFile := r.URL.Query().Get("id_file")
 	idUser := r.URL.Query().Get("id_user")
 	log.Println(idFile, idUser)

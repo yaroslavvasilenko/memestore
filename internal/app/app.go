@@ -8,6 +8,7 @@ import (
 	"memestore/pkg/config"
 	"memestore/pkg/logging"
 	"os"
+	"strconv"
 
 	"memestore/pkg/postgres"
 	"memestore/pkg/telegramapi"
@@ -70,10 +71,12 @@ func (app *App) myInlineQuery(update tgbotapi.Update) {
 		log.Debug("no find file")
 		return
 	}
+	idUser := strconv.Itoa(f.IdUser)
 
-	url := fmt.Sprintf("https://memestore-q0oy.onrender.com/for_telegram?id_user=%s&id_file=%s", f.IdUser, f.Name)
+	url := fmt.Sprintf("https://memestore-q0oy.onrender.com/for_telegram?id_user=%s&id_file=%s", idUser, f.ID)
 
 	err = file.AnswerInlineQuery(app.Bot, update.InlineQuery.ID, url, update.InlineQuery.Query)
+	log.Info("Yes")
 	if err != nil {
 		log.Debug(err)
 	}
