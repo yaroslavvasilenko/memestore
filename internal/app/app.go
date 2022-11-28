@@ -61,31 +61,20 @@ func (app *App) Run() {
 func (app *App) myInlineQuery(update tgbotapi.Update) {
 	f, err := postgres.FindFile(app.Db, update.InlineQuery.Query, update.InlineQuery.From.ID)
 	if err != nil {
-		//  ToDO: make msg "file not found"?
+		log.Debug(err, "file not found")
 		return
 	}
 
 	file := makeTypeFileForDB(f)
 	if file == nil {
-		log.Debug("no type file")
+		log.Debug("no find file")
 		return
 	}
 
-	url := fmt.Sprintf("http://127.0.0.1:4000/for_telegram?id_user=%s&id_file=%s", f.IdUser, f.Name)
+	url := fmt.Sprintf("https://memestore-q0oy.onrender.com/for_telegram?id_user=%s&id_file=%s", f.IdUser, f.Name)
 
-	file.AnswerInlineQuery(app.Bot, update.InlineQuery.ID, url, update.InlineQuery.Query)
-
-	article := tgbotapi.NewInlineQueryResultArticle(update.InlineQuery.ID, "Echo", "file find")
-	article.Description = update.InlineQuery.Query
-
-	inlineConf := tgbotapi.InlineConfig{
-		InlineQueryID: update.InlineQuery.ID,
-		IsPersonal:    true,
-		CacheTime:     0,
-		Results:       []interface{}{article},
-	}
-
-	if _, err := app.Bot.AnswerInlineQuery(inlineConf); err != nil {
+	err = file.AnswerInlineQuery(app.Bot, update.InlineQuery.ID, url, update.InlineQuery.Query)
+	if err != nil {
 		log.Debug(err)
 	}
 }
