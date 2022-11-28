@@ -8,10 +8,11 @@ import (
 
 type Document struct {
 	ITypeFile
-	ID     string
-	Name   string
-	Size   int
-	IdUser int
+	ID       string
+	Name     string
+	Size     int
+	IdUser   int
+	MimeType string
 }
 
 func (d *Document) DownloadFile() error {
@@ -47,6 +48,7 @@ func (d *Document) InsertDB(db *gorm.DB, idUser int) error {
 		Size:     d.Size,
 		IdUser:   idUser,
 		TypeFile: postgres.TyDocument,
+		MimeType: d.MimeType,
 	})
 	if tx.Error != nil {
 		return tx.Error

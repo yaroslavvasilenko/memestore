@@ -18,9 +18,10 @@ func (app *App) linkForDownload(id string) string {
 func (app *App) makeTypeFile(m *tgbotapi.Message) fileSystem.ITypeFile {
 	if m.Document != nil {
 		return &fileSystem.Document{
-			ID:   app.linkForDownload(m.Document.FileID),
-			Name: m.Document.FileName,
-			Size: m.Document.FileSize,
+			ID:       app.linkForDownload(m.Document.FileID),
+			Name:     m.Document.FileName,
+			Size:     m.Document.FileSize,
+			MimeType: m.Document.MimeType,
 		}
 	} else if m.Audio != nil {
 		return &fileSystem.Audio{

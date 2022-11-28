@@ -20,6 +20,7 @@ type File struct {
 	Size     int
 	IdUser   int
 	TypeFile int
+	MimeType string
 }
 
 type User struct {
