@@ -30,6 +30,15 @@ func (app *App) makeTypeFile(m *tgbotapi.Message) fileSystem.ITypeFile {
 			Size:     m.Audio.FileSize,
 			MimeType: m.Audio.MimeType,
 		}
+	} else if m.Photo != nil {
+		ph := *m.Photo
+		phOne := ph[0]
+		return &fileSystem.Photo{
+			ID:       app.linkForDownload(phOne.FileID),
+			Name:     m.Caption,
+			Size:     0,
+			MimeType: "unknown",
+		}
 	}
 	return nil
 }
