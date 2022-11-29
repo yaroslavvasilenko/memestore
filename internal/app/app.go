@@ -1,12 +1,14 @@
 package app
 
 import (
+	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	log "github.com/sirupsen/logrus"
 	"gorm.io/gorm"
 	"memestore/pkg/config"
 	"memestore/pkg/logging"
 	"os"
+	"strconv"
 
 	"memestore/pkg/postgres"
 	"memestore/pkg/telegramapi"
@@ -58,23 +60,26 @@ func (app *App) Run() {
 }
 
 func (app *App) myInlineQuery(update tgbotapi.Update) {
-	_, err := postgres.FindFile(app.Db, update.InlineQuery.Query, update.InlineQuery.From.ID)
+	f, err := postgres.FindFile(app.Db, update.InlineQuery.Query, update.InlineQuery.From.ID)
+	log.Info("Find file")
 	if err != nil {
-		//  ToDO: make msg "file not found"
+		log.Debug(err, "file not found")
 		return
 	}
 
-	article := tgbotapi.NewInlineQueryResultArticle(update.InlineQuery.ID, "Echo", "file find")
-	article.Description = update.InlineQuery.Query
-
-	inlineConf := tgbotapi.InlineConfig{
-		InlineQueryID: update.InlineQuery.ID,
-		IsPersonal:    true,
-		CacheTime:     0,
-		Results:       []interface{}{article},
+	file := makeTypeFileForDB(f)
+	log.Info("Type file")
+	if file == nil {
+		log.Debug("no find file")
+		return
 	}
+	idUser := strconv.Itoa(f.IdUser)
 
-	if _, err := app.Bot.AnswerInlineQuery(inlineConf); err != nil {
+	url := fmt.Sprintf("https://memestore-q0oy.onrender.com/for_telegram?id_user=%s&id_file=%s", idUser, f.ID)
+
+	err = file.AnswerInlineQuery(app.Bot, update.InlineQuery.ID, url, update.InlineQuery.Query)
+	log.Info("Yes")
+	if err != nil {
 		log.Debug(err)
 	}
 }
@@ -106,9 +111,8 @@ func (app *App) myInsertFile(update tgbotapi.Update) {
 		return
 	}
 
-	msg := tgbotapi.NewMessage(update.Message.Chat.ID, "File downloaded")
-	_, err := app.Bot.Send(msg)
-	if err != nil {
+	if err := app.sendMessageFast(update.Message.Chat.ID, "File downloaded"); err != nil {
 		log.Debug(err)
 	}
+
 }

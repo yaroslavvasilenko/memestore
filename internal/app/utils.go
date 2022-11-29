@@ -18,9 +18,10 @@ func (app *App) linkForDownload(id string) string {
 func (app *App) makeTypeFile(m *tgbotapi.Message) fileSystem.ITypeFile {
 	if m.Document != nil {
 		return &fileSystem.Document{
-			ID:   app.linkForDownload(m.Document.FileID),
-			Name: m.Document.FileName,
-			Size: m.Document.FileSize,
+			ID:       app.linkForDownload(m.Document.FileID),
+			Name:     m.Document.FileName,
+			Size:     m.Document.FileSize,
+			MimeType: m.Document.MimeType,
 		}
 	} else if m.Audio != nil {
 		return &fileSystem.Audio{
@@ -28,6 +29,40 @@ func (app *App) makeTypeFile(m *tgbotapi.Message) fileSystem.ITypeFile {
 			Name: m.Audio.Title,
 			Size: m.Audio.FileSize,
 		}
+	}
+	return nil
+}
+
+func makeTypeFileForDB(file *postgres.File) fileSystem.ITypeFile {
+	switch file.TypeFile {
+	case postgres.TyDocument:
+		return &fileSystem.Document{
+			ID:       file.ID,
+			Name:     file.Name,
+			Size:     file.Size,
+			IdUser:   file.IdUser,
+			MimeType: file.MimeType,
+		}
+
+	case postgres.TyAudio:
+		return &fileSystem.Audio{
+			ID:     file.ID,
+			Name:   file.Name,
+			Size:   file.Size,
+			IdUser: file.IdUser,
+		}
+	default:
+		return nil
+
+	}
+
+}
+
+func (app *App) sendMessageFast(chatID int64, textMessage string) error {
+	msg := tgbotapi.NewMessage(chatID, textMessage)
+	_, err := app.Bot.Send(msg)
+	if err != nil {
+		return err
 	}
 	return nil
 }

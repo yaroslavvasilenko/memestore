@@ -20,6 +20,7 @@ type File struct {
 	Size     int
 	IdUser   int
 	TypeFile int
+	MimeType string
 }
 
 type User struct {
@@ -39,12 +40,12 @@ func PostgresInit(urlPostgres string) (*gorm.DB, error) {
 	return db, err
 }
 
-func FindFile(db *gorm.DB, name string, idUser int) (*File, error) {
+func FindFile(db *gorm.DB, nameFile string, idUser int) (*File, error) {
 	var result File
 	tx := db.Raw(
-		`SELECT id, name, size, id_user, type_file
+		`SELECT id, name, size, id_user, type_file, mime_type
 			 FROM files
-			 WHERE id_user = ? and name = ?`, idUser, name).Scan(&result)
+			 WHERE id_user = ? and name = ?`, idUser, nameFile).Scan(&result)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
