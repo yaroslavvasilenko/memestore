@@ -53,6 +53,8 @@ func (app *App) Run() {
 	for update := range *app.MessChan {
 		if update.InlineQuery != nil && update.InlineQuery.Query != "" {
 			app.myInlineQuery(update)
+		} else if update.Message.IsCommand() {
+			app.myCommand(update)
 		} else if update.Message != nil {
 			app.myInsertFile(update)
 		}
@@ -115,4 +117,27 @@ func (app *App) myInsertFile(update tgbotapi.Update) {
 		log.Debug(err)
 	}
 
+}
+
+func (app *App) myCommand(update tgbotapi.Update) {
+	var msg string
+	switch update.Message.Command() {
+	case "start":
+		msg = "Hi"
+	case "help":
+		msg = `Вы можете отправить мне только документ(pdf) пока что
+и через инлайн запрос потом отправить его любому человеку в любой момент
+имя файла надо вводить полностью
+@MemesStore_bot название файла`
+	case "files":
+		var file []postgres.File
+		app.Db.Where(&postgres.File{IdUser: update.Message.From.ID}).Find(&file)
+		for _, value := range file {
+			msg += value.Name + "\n"
+		}
+		msg = "вот\n" + msg
+	default:
+		msg = "такого не знаю"
+	}
+	app.sendMessageFast(update.Message.Chat.ID, msg)
 }
