@@ -88,6 +88,7 @@ func (app *App) myInlineQuery(update tgbotapi.Update) {
 
 func (app *App) myInsertFile(update tgbotapi.Update) {
 	userID := update.Message.From.ID
+
 	file := app.makeTypeFile(update.Message)
 	if file == nil {
 		log.Debug("no type file")
@@ -104,6 +105,13 @@ func (app *App) myInsertFile(update tgbotapi.Update) {
 			return
 		}
 	}
+
+	universFile := file.NewUniversStruct()
+	if app.checkName(universFile) {
+		app.sendMessageFast(update.Message.Chat.ID, "Такое имя файла занято")
+		return
+	}
+
 	if err := file.DownloadFile(); err != nil {
 		log.Debug(err)
 		return
@@ -136,6 +144,8 @@ func (app *App) myCommand(update tgbotapi.Update) {
 			msg += value.Name + "\n"
 		}
 		msg = "вот\n" + msg
+	case "delete":
+
 	default:
 		msg = "такого не знаю"
 	}

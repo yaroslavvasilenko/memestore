@@ -20,6 +20,7 @@ type ITypeFile interface {
 	InsertDB(db *gorm.DB, idUser int) error
 	DeleteDB(db *gorm.DB, idUser int) error
 	AnswerInlineQuery(bot *tgbotapi.BotAPI, inlineQueryId, url, description string) error
+	NewUniversStruct() UniversStruct
 }
 
 func downloadAny(id string, path string) error {
@@ -52,4 +53,9 @@ func makeRandom() string {
 		idRune[i] = letterRunes[nBig.Int64()]
 	}
 	return string(idRune)
+}
+
+type UniversStruct struct {
+	NameFile string
+	IdUser   int
 }

@@ -85,3 +85,10 @@ func (a *Audio) DeleteDB(db *gorm.DB, idUser int) error {
 
 	return nil
 }
+
+func (a *Audio) NewUniversStruct() UniversStruct {
+	return UniversStruct{
+		NameFile: a.Name,
+		IdUser:   a.IdUser,
+	}
+}

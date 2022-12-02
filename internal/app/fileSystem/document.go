@@ -86,3 +86,10 @@ func (d *Document) DeleteDB(db *gorm.DB, idUser int) error {
 
 	return nil
 }
+
+func (d *Document) NewUniversStruct() UniversStruct {
+	return UniversStruct{
+		NameFile: d.Name,
+		IdUser:   d.IdUser,
+	}
+}

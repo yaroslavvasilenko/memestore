@@ -85,3 +85,18 @@ func (app *App) execUser(userID int) bool {
 	}
 	return true
 }
+
+func (app *App) checkName(universStruct fileSystem.UniversStruct) bool {
+
+	f := postgres.File{
+		Name:   universStruct.NameFile,
+		IdUser: universStruct.IdUser,
+	}
+	resultFile := postgres.File{Size: 0}
+	app.Db.Model(f).First(&resultFile)
+
+	if resultFile.Size != 0 {
+		return true
+	}
+	return false
+}
