@@ -9,6 +9,7 @@ import (
 	"memestore/pkg/logging"
 	"os"
 	"strconv"
+	"strings"
 
 	"memestore/pkg/postgres"
 	"memestore/pkg/telegramapi"
@@ -56,7 +57,13 @@ func (app *App) Run() {
 		} else if update.Message.IsCommand() {
 			app.myCommand(update)
 		} else if update.Message != nil {
-			app.myInsertFile(update)
+			testSplit := strings.Split(update.Message.Text, " ")
+			testSplit[0] = strings.ToLower(testSplit[0])
+			if testSplit[0] == "удалить" || testSplit[0] == "delete" {
+				app.deleteFileForName(testSplit, update)
+			} else {
+				app.myInsertFile(update)
+			}
 		}
 	}
 }
@@ -150,4 +157,15 @@ func (app *App) myCommand(update tgbotapi.Update) {
 		msg = "такого не знаю"
 	}
 	app.sendMessageFast(update.Message.Chat.ID, msg)
+}
+
+func (app *App) deleteFileForName(arrayText []string, update tgbotapi.Update) {
+	for i := 1; i < len(arrayText); i++ {
+		err := postgres.DeleteFile(app.Db, arrayText[i], update.Message.From.ID)
+		if err != nil {
+			app.sendMessageFast(update.Message.Chat.ID, "файл"+arrayText[i]+" не удалён")
+		}
+		app.sendMessageFast(update.Message.Chat.ID, "удаленно"+arrayText[i])
+	}
+
 }

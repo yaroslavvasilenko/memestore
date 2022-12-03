@@ -11,10 +11,6 @@ import (
 	"gorm.io/gorm"
 )
 
-const (
-	FilePath = "./store/"
-)
-
 type ITypeFile interface {
 	DownloadFile() error
 	InsertDB(db *gorm.DB, idUser int) error

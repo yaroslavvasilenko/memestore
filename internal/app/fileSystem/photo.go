@@ -17,7 +17,7 @@ type Photo struct {
 
 func (d *Photo) DownloadFile() error {
 	randName := makeRandom()
-	err := downloadAny(d.ID, FilePath+randName)
+	err := downloadAny(d.ID, postgres.FilePath+randName)
 	if err != nil {
 		return err
 	}

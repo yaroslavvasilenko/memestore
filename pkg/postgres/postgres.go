@@ -3,6 +3,11 @@ package postgres
 import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"os"
+)
+
+const (
+	FilePath = "./store/"
 )
 
 const (
@@ -40,6 +45,8 @@ func PostgresInit(urlPostgres string) (*gorm.DB, error) {
 	return db, err
 }
 
+// Переделать на методы для DB
+
 func FindFile(db *gorm.DB, nameFile string, idUser int) (*File, error) {
 	var result File
 	tx := db.Raw(
@@ -50,4 +57,28 @@ func FindFile(db *gorm.DB, nameFile string, idUser int) (*File, error) {
 		return nil, tx.Error
 	}
 	return &result, nil
+}
+
+func DeleteFile(db *gorm.DB, nameFile string, idUser int) error {
+	fileFinding, err := FindFile(db, nameFile, idUser)
+	if err != nil {
+		return err
+	}
+	tx := db.Delete(fileFinding)
+	if tx.Error != nil {
+		return tx.Error
+	}
+	err = DeleteFileStore(fileFinding.ID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeleteFileStore(idFile string) error {
+	err := os.Remove(FilePath + idFile)
+	if err != nil {
+		return err
+	}
+	return nil
 }
