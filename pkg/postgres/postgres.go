@@ -4,6 +4,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"os"
+	"path"
 )
 
 const (
@@ -160,4 +161,26 @@ func (db *DB) CheckName(file *File) bool {
 		return true
 	}
 	return false
+}
+
+func (db *DB) AllDelete() error {
+	tx := db.Postgres.Exec(`DELETE FROM files`)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	tx = db.Postgres.Exec(`DELETE FROM users`)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	dir, err := os.ReadDir(FilePath)
+	if err != nil {
+		return err
+	}
+	for _, d := range dir {
+		os.RemoveAll(path.Join([]string{FilePath, d.Name()}...))
+	}
+
+	return nil
 }
