@@ -4,7 +4,6 @@ import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	log "github.com/sirupsen/logrus"
-	"gorm.io/gorm"
 	"memestore/pkg/config"
 	"memestore/pkg/logging"
 	"os"
@@ -16,7 +15,7 @@ import (
 )
 
 type App struct {
-	Db       *gorm.DB
+	Db       *postgres.DB
 	Bot      *tgbotapi.BotAPI
 	TokenBot string
 	MessChan *tgbotapi.UpdatesChannel
@@ -69,7 +68,7 @@ func (app *App) Run() {
 }
 
 func (app *App) myInlineQuery(update tgbotapi.Update) {
-	f, err := postgres.FindFile(app.Db, update.InlineQuery.Query, update.InlineQuery.From.ID)
+	f, err := app.Db.FindFile(update.InlineQuery.Query, update.InlineQuery.From.ID)
 	log.Info("Find file")
 	if err != nil {
 		log.Debug(err, "file not found")
@@ -102,28 +101,27 @@ func (app *App) myInsertFile(update tgbotapi.Update) {
 		return
 	}
 
-	if app.execUser(userID) == false {
-		tx := app.Db.Create(&postgres.User{
-			ID:        userID,
-			SizeStore: 0,
-		})
-		if tx.Error != nil {
-			log.Debug(tx.Error)
+	f := newFullFile(file)
+
+	if app.Db.ExecUser(userID) == false {
+		err := app.Db.CreateUser(f.FileDB)
+		if err != nil {
+			log.Debug(err)
 			return
 		}
 	}
 
-	universFile := file.NewUniversStruct()
-	if app.checkName(universFile) {
+	if app.Db.CheckName(f.FileDB) {
 		app.sendMessageFast(update.Message.Chat.ID, "Такое имя файла занято")
 		return
 	}
 
-	if err := file.DownloadFile(); err != nil {
+	if err := f.FileDB.DownloadFile(); err != nil {
 		log.Debug(err)
 		return
 	}
-	if err := file.InsertDB(app.Db, userID); err != nil {
+
+	if err := app.Db.InsertDB(f.FileDB); err != nil {
 		log.Debug(err)
 		return
 	}
@@ -145,9 +143,8 @@ func (app *App) myCommand(update tgbotapi.Update) {
 имя файла надо вводить полностью
 @MemesStore_bot название файла`
 	case "files":
-		var file []postgres.File
-		app.Db.Where(&postgres.File{IdUser: update.Message.From.ID}).Find(&file)
-		for _, value := range file {
+		files := app.Db.AllFileUser(update.Message.From.ID)
+		for _, value := range files {
 			msg += value.Name + "\n"
 		}
 		msg = "вот\n" + msg
@@ -161,7 +158,7 @@ func (app *App) myCommand(update tgbotapi.Update) {
 
 func (app *App) deleteFileForName(arrayText []string, update tgbotapi.Update) {
 	for i := 1; i < len(arrayText); i++ {
-		err := postgres.DeleteFile(app.Db, arrayText[i], update.Message.From.ID)
+		err := app.Db.DeleteFile(arrayText[i], update.Message.From.ID)
 		if err != nil {
 			app.sendMessageFast(update.Message.Chat.ID, "файл"+arrayText[i]+" не удалён")
 		}

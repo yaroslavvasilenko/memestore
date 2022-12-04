@@ -76,27 +76,3 @@ func (app *App) sendMessageFast(chatID int64, textMessage string) error {
 	}
 	return nil
 }
-
-func (app *App) execUser(userID int) bool {
-	user := postgres.User{ID: userID}
-	tx := app.Db.First(&user)
-	if tx.RowsAffected != 1 {
-		return false
-	}
-	return true
-}
-
-func (app *App) checkName(universStruct fileSystem.UniversStruct) bool {
-
-	f := postgres.File{
-		Name:   universStruct.NameFile,
-		IdUser: universStruct.IdUser,
-	}
-	resultFile := postgres.File{Size: 0}
-	app.Db.Model(f).First(&resultFile)
-
-	if resultFile.Size != 0 {
-		return true
-	}
-	return false
-}
