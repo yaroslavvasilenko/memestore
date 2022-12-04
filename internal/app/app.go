@@ -93,8 +93,6 @@ func (app *App) myInlineQuery(update tgbotapi.Update) {
 }
 
 func (app *App) myInsertFile(update tgbotapi.Update) {
-	userID := update.Message.From.ID
-
 	file := app.makeTypeFile(update.Message)
 	if file == nil {
 		log.Debug("no type file")
@@ -103,7 +101,9 @@ func (app *App) myInsertFile(update tgbotapi.Update) {
 
 	f := newFullFile(file)
 
-	if app.Db.ExecUser(userID) == false {
+	f.FileDB.IdUser = update.Message.From.ID
+
+	if app.Db.ExecUser(f.FileDB.IdUser) == false {
 		err := app.Db.CreateUser(f.FileDB)
 		if err != nil {
 			log.Debug(err)
@@ -160,9 +160,9 @@ func (app *App) deleteFileForName(arrayText []string, update tgbotapi.Update) {
 	for i := 1; i < len(arrayText); i++ {
 		err := app.Db.DeleteFile(arrayText[i], update.Message.From.ID)
 		if err != nil {
-			app.sendMessageFast(update.Message.Chat.ID, "файл"+arrayText[i]+" не удалён")
+			app.sendMessageFast(update.Message.Chat.ID, "файл "+arrayText[i]+" не удалён")
 		}
-		app.sendMessageFast(update.Message.Chat.ID, "удаленно"+arrayText[i])
+		app.sendMessageFast(update.Message.Chat.ID, "удаленно "+arrayText[i])
 	}
 
 }
