@@ -76,12 +76,3 @@ func (app *App) sendMessageFast(chatID int64, textMessage string) error {
 	}
 	return nil
 }
-
-func (app *App) execUser(userID int) bool {
-	user := postgres.User{ID: userID}
-	tx := app.Db.First(&user)
-	if tx.RowsAffected != 1 {
-		return false
-	}
-	return true
-}
