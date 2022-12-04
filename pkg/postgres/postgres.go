@@ -161,3 +161,17 @@ func (db *DB) CheckName(file *File) bool {
 	}
 	return false
 }
+
+func (db *DB) AllDelete() error {
+	tx := db.Postgres.Exec(`DELETE FROM files`)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	tx = db.Postgres.Exec(`DELETE FROM users`)
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	return nil
+}

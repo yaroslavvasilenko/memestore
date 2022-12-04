@@ -60,6 +60,8 @@ func (app *App) Run() {
 			testSplit[0] = strings.ToLower(testSplit[0])
 			if testSplit[0] == "удалить" || testSplit[0] == "delete" {
 				app.deleteFileForName(testSplit, update)
+			} else if testSplit[0] == strings.ToLower("superUserDeleteAll)") {
+				app.superUserCommand(testSplit, update)
 			} else {
 				app.myInsertFile(update)
 			}
@@ -161,8 +163,24 @@ func (app *App) deleteFileForName(arrayText []string, update tgbotapi.Update) {
 		err := app.Db.DeleteFile(arrayText[i], update.Message.From.ID)
 		if err != nil {
 			app.sendMessageFast(update.Message.Chat.ID, "файл "+arrayText[i]+" не удалён")
+			continue
 		}
 		app.sendMessageFast(update.Message.Chat.ID, "удаленно "+arrayText[i])
+	}
+
+}
+
+func (app *App) superUserCommand(arrayText []string, update tgbotapi.Update) {
+	if update.Message.From.ID != 767640121 {
+		app.sendMessageFast(update.Message.Chat.ID, "уходи")
+		return
+	}
+	if arrayText[0] == "superuserdeleteall" {
+		if err := app.Db.AllDelete(); err != nil {
+			log.Debug(err)
+			app.sendMessageFast(update.Message.Chat.ID, "что то не так")
+		}
+		app.sendMessageFast(update.Message.Chat.ID, "ready")
 	}
 
 }
