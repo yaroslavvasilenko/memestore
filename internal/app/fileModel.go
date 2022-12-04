@@ -5,13 +5,13 @@ import (
 	"memestore/pkg/postgres"
 )
 
-type instansFullFile struct {
+type fileModel struct {
 	FileDB    *postgres.File
 	FileTgAPI fileSystem.ITypeFile
 }
 
-func newFullFile(file fileSystem.ITypeFile) *instansFullFile {
-	return &instansFullFile{
+func newFullFile(file fileSystem.ITypeFile) *fileModel {
+	return &fileModel{
 		FileDB:    file.GiveFile(),
 		FileTgAPI: file,
 	}
