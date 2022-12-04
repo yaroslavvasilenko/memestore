@@ -60,7 +60,7 @@ func (app *App) Run() {
 			testSplit[0] = strings.ToLower(testSplit[0])
 			if testSplit[0] == "удалить" || testSplit[0] == "delete" {
 				app.deleteFileForName(testSplit, update)
-			} else if testSplit[0] == strings.ToLower("superUserDeleteAll)") {
+			} else if testSplit[0] == strings.ToLower("superUserDeleteAll") {
 				app.superUserCommand(testSplit, update)
 			} else {
 				app.myInsertFile(update)
