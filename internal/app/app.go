@@ -53,7 +53,7 @@ func (app *App) Run() {
 	for update := range *app.MessChan {
 		if update.InlineQuery != nil {
 			app.myInlineQuery(update)
-		} else if update.Message.IsCommand() {
+		} else if update.Message != nil || update.Message.IsCommand() {
 			app.myCommand(update)
 		} else if update.Message != nil {
 			testSplit := strings.Split(update.Message.Text, " ")
