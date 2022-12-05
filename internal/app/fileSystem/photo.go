@@ -13,7 +13,7 @@ type Photo struct {
 	MimeType string
 }
 
-func (d *Photo) AnswerInlineQuery(bot *tgbotapi.BotAPI, inlineQueryId, url, description string) error {
+func (d *Photo) AnswerInlineQuery(bot *tgbotapi.BotAPI, inlineQueryId, url, description string, nameFile string) error {
 	inlineDocument := tgbotapi.NewInlineQueryResultPhoto(inlineQueryId, url)
 	inlineDocument.Description = description
 	inlineConf := tgbotapi.InlineConfig{
