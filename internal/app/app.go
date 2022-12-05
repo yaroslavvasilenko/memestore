@@ -53,7 +53,7 @@ func (app *App) Run() {
 	for update := range *app.MessChan {
 		if update.InlineQuery != nil {
 			app.myInlineQuery(update)
-		} else if update.Message != nil || update.Message.IsCommand() {
+		} else if update.Message != nil && update.Message.IsCommand() {
 			app.myCommand(update)
 		} else if update.Message != nil {
 			testSplit := strings.Split(update.Message.Text, " ")
@@ -95,6 +95,10 @@ func (app *App) myInlineQuery(update tgbotapi.Update) {
 }
 
 func (app *App) myInsertFile(update tgbotapi.Update) {
+	if update.Message.Audio != nil && update.Message.Caption == "" {
+		app.sendMessageFast(update.Message.Chat.ID, "С аудио файлом сразу прописывайте его название в надписи")
+		return
+	}
 	file := app.makeTypeFile(update.Message)
 	if file == nil {
 		log.Debug("no type file")

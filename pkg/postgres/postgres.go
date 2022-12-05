@@ -149,15 +149,9 @@ func (db *DB) ExecUser(userID int) bool {
 }
 
 func (db *DB) CheckName(file *File) bool {
+	f, _ := db.FindFile(file.Name, file.IdUser)
 
-	f := &File{
-		Name:   file.Name,
-		IdUser: file.IdUser,
-	}
-	resultFile := &File{Size: 0}
-	db.Postgres.Model(f).First(resultFile)
-
-	if resultFile.Size != 0 {
+	if f.Size != 0 {
 		return true
 	}
 	return false

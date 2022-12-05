@@ -26,7 +26,7 @@ func (app *App) makeTypeFile(m *tgbotapi.Message) fileSystem.ITypeFile {
 	} else if m.Audio != nil {
 		return &fileSystem.Audio{
 			ID:       app.linkForDownload(m.Audio.FileID),
-			Name:     m.Audio.Title,
+			Name:     m.Caption,
 			Size:     m.Audio.FileSize,
 			MimeType: m.Audio.MimeType,
 		}
