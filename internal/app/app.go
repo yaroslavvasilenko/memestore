@@ -51,7 +51,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 
 func (app *App) Run() {
 	for update := range *app.MessChan {
-		if update.InlineQuery != nil && update.InlineQuery.Query != "" {
+		if update.InlineQuery != nil {
 			app.myInlineQuery(update)
 		} else if update.Message.IsCommand() {
 			app.myCommand(update)
