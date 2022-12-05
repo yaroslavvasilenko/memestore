@@ -87,7 +87,7 @@ func (app *App) myInlineQuery(update tgbotapi.Update) {
 
 	url := fmt.Sprintf("https://memestore-q0oy.onrender.com/for_telegram?id_user=%s&id_file=%s", idUser, f.ID)
 
-	err = file.AnswerInlineQuery(app.Bot, update.InlineQuery.ID, url, update.InlineQuery.Query)
+	err = file.AnswerInlineQuery(app.Bot, update.InlineQuery.ID, url, update.InlineQuery.Query, f.Name)
 	log.Info("Yes")
 	if err != nil {
 		log.Debug(err)

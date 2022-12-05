@@ -53,15 +53,15 @@ func PostgresInit(urlPostgres string) (*DB, error) {
 // Переделать на методы для DB
 
 func (db *DB) FindFile(nameFile string, idUser int) (*File, error) {
-	var result File
+	var result *File
 	tx := db.Postgres.Raw(
 		`SELECT id, name, size, id_user, type_file, mime_type
 			 FROM files
-			 WHERE id_user = ? and name = ?`, idUser, nameFile).Scan(&result)
+			 WHERE id_user = ? and name = ?`, idUser, nameFile).Scan(result)
 	if tx.Error != nil {
 		return nil, tx.Error
 	}
-	return &result, nil
+	return result, nil
 }
 
 func (db *DB) DeleteDB(f *File) error {

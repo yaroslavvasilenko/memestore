@@ -14,8 +14,8 @@ type Document struct {
 	MimeType string
 }
 
-func (d *Document) AnswerInlineQuery(bot *tgbotapi.BotAPI, inlineQueryId, url, description string) error {
-	inlineDocument := tgbotapi.NewInlineQueryResultDocument(inlineQueryId, url, "Your document", d.MimeType)
+func (d *Document) AnswerInlineQuery(bot *tgbotapi.BotAPI, inlineQueryId, url, description string, nameFile string) error {
+	inlineDocument := tgbotapi.NewInlineQueryResultDocument(inlineQueryId, url, nameFile, d.MimeType)
 	inlineDocument.Description = description
 	inlineConf := tgbotapi.InlineConfig{
 		InlineQueryID: inlineQueryId,

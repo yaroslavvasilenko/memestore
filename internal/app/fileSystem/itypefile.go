@@ -6,6 +6,6 @@ import (
 )
 
 type ITypeFile interface {
-	AnswerInlineQuery(bot *tgbotapi.BotAPI, inlineQueryId, url, description string) error
+	AnswerInlineQuery(bot *tgbotapi.BotAPI, inlineQueryId, url, description string, nameFile string) error
 	GiveFile() *postgres.File
 }

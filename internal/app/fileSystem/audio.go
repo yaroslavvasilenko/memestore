@@ -14,13 +14,13 @@ type Audio struct {
 	MimeType string
 }
 
-func (a *Audio) AnswerInlineQuery(bot *tgbotapi.BotAPI, inlineQueryId, url, description string) error {
-	inlineDocument := tgbotapi.NewInlineQueryResultAudio(inlineQueryId, url, "Your document")
+func (a *Audio) AnswerInlineQuery(bot *tgbotapi.BotAPI, inlineQueryId, url, description string, nameFile string) error {
+	inlineAudio := tgbotapi.NewInlineQueryResultAudio(inlineQueryId, url, nameFile)
 	inlineConf := tgbotapi.InlineConfig{
 		InlineQueryID: inlineQueryId,
 		IsPersonal:    true,
 		CacheTime:     0,
-		Results:       []interface{}{inlineDocument},
+		Results:       []interface{}{inlineAudio},
 	}
 
 	if _, err := bot.AnswerInlineQuery(inlineConf); err != nil {
