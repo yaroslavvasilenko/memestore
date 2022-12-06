@@ -16,10 +16,11 @@ type Photo struct {
 
 func (p *Photo) AnswerInlineQuery(bot *tgbotapi.BotAPI, inlineQueryId, url, description string, nameFile string) error {
 	inlinePhoto := tgbotapi.InlineQueryResultPhoto{
-		Type:  "photo",
-		ID:    inlineQueryId,
-		URL:   url,
-		Title: nameFile,
+		Type:     "photo",
+		ID:       inlineQueryId,
+		URL:      url,
+		Title:    nameFile,
+		ThumbURL: url,
 	}
 	inlinePhoto.Description = description
 	inlineConf := tgbotapi.InlineConfig{
