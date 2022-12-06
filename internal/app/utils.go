@@ -32,12 +32,12 @@ func (app *App) makeTypeFile(m *tgbotapi.Message) fileSystem.ITypeFile {
 		}
 	} else if m.Photo != nil {
 		ph := *m.Photo
-		phOne := ph[0]
+		phOne := ph[1]
 		return &fileSystem.Photo{
 			ID:       app.linkForDownload(phOne.FileID),
 			Name:     m.Caption,
-			Size:     0,
-			MimeType: "unknown",
+			Size:     phOne.FileSize,
+			MimeType: "image/png",
 		}
 	}
 	return nil
@@ -56,11 +56,21 @@ func makeTypeFileForDB(file *postgres.File) fileSystem.ITypeFile {
 
 	case postgres.TyAudio:
 		return &fileSystem.Audio{
-			ID:     file.ID,
-			Name:   file.Name,
-			Size:   file.Size,
-			IdUser: file.IdUser,
+			ID:       file.ID,
+			Name:     file.Name,
+			Size:     file.Size,
+			IdUser:   file.IdUser,
+			MimeType: file.MimeType,
 		}
+	case postgres.TyPhoto:
+		return &fileSystem.Photo{
+			ID:       file.ID,
+			Name:     file.Name,
+			Size:     file.Size,
+			IdUser:   file.IdUser,
+			MimeType: file.MimeType,
+		}
+
 	default:
 		return nil
 
