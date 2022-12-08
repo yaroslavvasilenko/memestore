@@ -1,7 +1,9 @@
 package fileSystem
 
 import (
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"context"
+	telebot "github.com/go-telegram/bot"
+	"github.com/go-telegram/bot/models"
 	"memestore/pkg/postgres"
 )
 
@@ -14,16 +16,24 @@ type Audio struct {
 	MimeType string
 }
 
-func (a *Audio) AnswerInlineQuery(bot *tgbotapi.BotAPI, inlineQueryId, url, description string, nameFile string) error {
-	inlineAudio := tgbotapi.NewInlineQueryResultAudio(inlineQueryId, url, nameFile)
-	inlineConf := tgbotapi.InlineConfig{
-		InlineQueryID: inlineQueryId,
-		IsPersonal:    true,
-		CacheTime:     0,
-		Results:       []interface{}{inlineAudio},
+func (a *Audio) AnswerInlineQuery(bot *telebot.Bot, inlineQueryId, url, description string, nameFile string) error {
+	inlineAudio := models.InlineQueryResultAudio{
+		ID:       inlineQueryId,
+		Title:    nameFile,
+		AudioURL: url,
 	}
 
-	if _, err := bot.AnswerInlineQuery(inlineConf); err != nil {
+	results := []models.InlineQueryResult{
+		&inlineAudio,
+	}
+
+	inlineConf := &telebot.AnswerInlineQueryParams{
+		InlineQueryID: inlineQueryId,
+		IsPersonal:    true,
+		Results:       results,
+	}
+
+	if _, err := bot.AnswerInlineQuery(context.TODO(), inlineConf); err != nil {
 		return err
 	}
 	return nil

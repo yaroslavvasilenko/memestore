@@ -1,7 +1,9 @@
 package fileSystem
 
 import (
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"context"
+	telebot "github.com/go-telegram/bot"
+	"github.com/go-telegram/bot/models"
 	"memestore/pkg/postgres"
 )
 
@@ -14,23 +16,26 @@ type Photo struct {
 	MimeType string
 }
 
-func (p *Photo) AnswerInlineQuery(bot *tgbotapi.BotAPI, inlineQueryId, url, description string, nameFile string) error {
-	inlinePhoto := tgbotapi.InlineQueryResultPhoto{
-		Type:     "photo",
-		ID:       inlineQueryId,
-		URL:      url,
-		Title:    nameFile,
-		ThumbURL: url,
-	}
-	inlinePhoto.Description = description
-	inlineConf := tgbotapi.InlineConfig{
-		InlineQueryID: inlineQueryId,
-		IsPersonal:    true,
-		CacheTime:     0,
-		Results:       []interface{}{inlinePhoto},
+func (p *Photo) AnswerInlineQuery(bot *telebot.Bot, inlineQueryId, url, description string, nameFile string) error {
+	inlinePhoto := models.InlineQueryResultPhoto{
+		ID:          inlineQueryId,
+		PhotoURL:    url,
+		ThumbURL:    url,
+		Title:       nameFile,
+		Description: description,
 	}
 
-	if _, err := bot.AnswerInlineQuery(inlineConf); err != nil {
+	results := []models.InlineQueryResult{
+		&inlinePhoto,
+	}
+
+	inlineConf := &telebot.AnswerInlineQueryParams{
+		InlineQueryID: inlineQueryId,
+		IsPersonal:    true,
+		Results:       results,
+	}
+
+	if _, err := bot.AnswerInlineQuery(context.TODO(), inlineConf); err != nil {
 		return err
 	}
 	return nil

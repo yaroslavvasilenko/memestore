@@ -1,11 +1,11 @@
 package fileSystem
 
 import (
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/go-telegram/bot"
 	"memestore/pkg/postgres"
 )
 
 type ITypeFile interface {
-	AnswerInlineQuery(bot *tgbotapi.BotAPI, inlineQueryId, url, description string, nameFile string) error
+	AnswerInlineQuery(bot *bot.Bot, inlineQueryId, url, description string, nameFile string) error
 	GiveFile() *postgres.File
 }

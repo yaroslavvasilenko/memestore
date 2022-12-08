@@ -1,42 +1,34 @@
 package app
 
 import (
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"context"
+	"github.com/go-telegram/bot"
+	"github.com/go-telegram/bot/models"
 	"memestore/internal/app/fileSystem"
 	"memestore/pkg/postgres"
 )
 
-func (app *App) linkForDownload(id string) string {
-	file := tgbotapi.FileConfig{
-		FileID: id,
-	}
-
-	f, _ := app.Bot.GetFile(file)
-	return f.Link(app.TokenBot)
-}
-
-func (app *App) makeTypeFile(m *tgbotapi.Message) fileSystem.ITypeFile {
+func (app *App) makeTypeFile(m *models.Message) fileSystem.ITypeFile {
 	if m.Document != nil {
 		return &fileSystem.Document{
-			ID:       app.linkForDownload(m.Document.FileID),
+			ID:       m.Document.FileID,
 			Name:     m.Document.FileName,
 			Size:     m.Document.FileSize,
 			MimeType: m.Document.MimeType,
 		}
 	} else if m.Audio != nil {
 		return &fileSystem.Audio{
-			ID:       app.linkForDownload(m.Audio.FileID),
+			ID:       m.Audio.FileID,
 			Name:     m.Caption,
 			Size:     m.Audio.FileSize,
 			MimeType: m.Audio.MimeType,
 		}
 	} else if m.Photo != nil {
-		ph := *m.Photo
-		phOne := ph[1]
+
 		return &fileSystem.Photo{
-			ID:       app.linkForDownload(phOne.FileID),
+			ID:       m.Photo[0].FileID,
 			Name:     m.Caption,
-			Size:     phOne.FileSize,
+			Size:     m.Photo[0].FileSize,
 			MimeType: "image/png",
 		}
 	}
@@ -78,11 +70,21 @@ func makeTypeFileForDB(file *postgres.File) fileSystem.ITypeFile {
 
 }
 
-func (app *App) sendMessageFast(chatID int64, textMessage string) error {
-	msg := tgbotapi.NewMessage(chatID, textMessage)
-	_, err := app.Bot.Send(msg)
+func (app *App) sendMessageFast(chatID int, textMessage string) error {
+	_, err := app.Bot.SendMessage(context.TODO(), &bot.SendMessageParams{
+		ChatID: chatID,
+		Text:   textMessage,
+	})
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func IsCommand(m *models.Message) bool {
+	if m.Entities == nil || len(m.Entities) == 0 {
+		return false
+	}
+
+	return (m.Entities)[0].Offset == 0 && (m.Entities)[0].Type == "bot_command"
 }
