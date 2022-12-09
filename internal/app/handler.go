@@ -86,7 +86,9 @@ func (app *App) myCommand(update *models.Update) {
 		msg = `Вы можете отправить мне документ(pdf), mp3 пока что
 и через инлайн запрос потом отправить его любому человеку в любой момент
 имя файла надо вводить полностью
-@MemesStore_bot "название файла"`
+
+@MemesStore_bot 'название файла'
+Что бы удалить напишите "удалить 'имя файла'"`
 	case "/files":
 		files := app.Db.AllFileUser(update.Message.From.ID)
 		for _, value := range files {
