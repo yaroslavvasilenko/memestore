@@ -19,9 +19,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	log.Info("Bot polling started")
-
 	go myApp.ServerForLink()
 
-	myApp.Run()
+	if cfg.Webhook {
+		log.Info("Bot webhook started")
+		if err := myApp.RunWebhook(); err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		log.Info("Bot polling started")
+		myApp.RunLongPool()
+	}
 }
