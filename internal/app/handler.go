@@ -80,7 +80,7 @@ func (app *App) myCommand(update *models.Update) {
 	var msg string
 	switch update.Message.Text {
 	case "/start":
-		msg = "Hi"
+		msg = "Hi v0.2"
 	case "/help":
 		msg = `Вы можете отправить мне документ(pdf), mp3 пока что
 и через инлайн запрос потом отправить его любому человеку в любой момент
