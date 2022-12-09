@@ -80,12 +80,13 @@ func (app *App) myCommand(update *models.Update) {
 	var msg string
 	switch update.Message.Text {
 	case "/start":
-		msg = "Hi v0.2"
+		msg = `Hi v0.2
+Что бы посмотреть что я могу введи /help`
 	case "/help":
 		msg = `Вы можете отправить мне документ(pdf), mp3 пока что
 и через инлайн запрос потом отправить его любому человеку в любой момент
 имя файла надо вводить полностью
-@MemesStore_bot название файла`
+@MemesStore_bot "название файла"`
 	case "/files":
 		files := app.Db.AllFileUser(update.Message.From.ID)
 		for _, value := range files {
