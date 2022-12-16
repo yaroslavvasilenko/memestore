@@ -21,7 +21,7 @@ func (d *Video) AnswerInlineQuery(bot *telebot.Bot, inlineQueryId, url, descript
 		ID:          inlineQueryId,
 		Title:       nameFile,
 		VideoURL:    url,
-		ThumbURL:    "https://memestore-q0oy.onrender.com/thumb_url",
+		ThumbURL:    "https://memestore-q0oy.onrender.com/thumb_url", //ToDo: plug
 		MimeType:    d.MimeType,
 		Description: description,
 	}

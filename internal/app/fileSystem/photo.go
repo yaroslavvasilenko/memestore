@@ -20,7 +20,7 @@ func (p *Photo) AnswerInlineQuery(bot *telebot.Bot, inlineQueryId, url, descript
 	inlinePhoto := models.InlineQueryResultPhoto{
 		ID:       inlineQueryId,
 		PhotoURL: url,
-		ThumbURL: "https://memestore-q0oy.onrender.com/thumb_url",
+		ThumbURL: "https://memestore-q0oy.onrender.com/thumb_url", //ToDo: plug
 	}
 
 	results := []models.InlineQueryResult{
