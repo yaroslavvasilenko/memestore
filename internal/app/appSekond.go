@@ -11,6 +11,7 @@ func (app *App) ServerForLink() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", app.home)
 	mux.HandleFunc("/for_telegram", app.getFile)
+	mux.HandleFunc("/thumb_url", app.getThumb)
 
 	log.Info("Запуск веб-сервера на http://127.0.0.1:4000")
 	err := http.ListenAndServe(":4000", mux)
@@ -42,5 +43,16 @@ func (app *App) getFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/octet-stream")
 	//  ToDo: Need MIME type. Possibly - https://github.com/gabriel-vasile/mimetype
 	//   or write one yourself
+	w.Write(f)
+}
+
+func (app *App) getThumb(w http.ResponseWriter, r *http.Request) {
+	f, err := os.ReadFile("./sample-birch-400x300.jpg")
+	if err != nil {
+		log.Debug(err)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+
 	w.Write(f)
 }
