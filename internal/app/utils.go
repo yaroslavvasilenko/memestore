@@ -31,6 +31,13 @@ func (app *App) makeTypeFile(m *models.Message) fileSystem.ITypeFile {
 			Size:     m.Photo[0].FileSize,
 			MimeType: "image/png",
 		}
+	} else if m.Video != nil {
+		return &fileSystem.Video{
+			ID:       m.Video.FileID,
+			Name:     m.Video.FileName,
+			Size:     m.Video.FileSize,
+			MimeType: m.Video.MimeType,
+		}
 	}
 	return nil
 }
@@ -56,6 +63,14 @@ func makeTypeFileForDB(file *postgres.File) fileSystem.ITypeFile {
 		}
 	case postgres.TyPhoto:
 		return &fileSystem.Photo{
+			ID:       file.ID,
+			Name:     file.Name,
+			Size:     file.Size,
+			IdUser:   file.IdUser,
+			MimeType: file.MimeType,
+		}
+	case postgres.TyVideo:
+		return &fileSystem.Video{
 			ID:       file.ID,
 			Name:     file.Name,
 			Size:     file.Size,
