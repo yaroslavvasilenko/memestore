@@ -18,6 +18,7 @@ type App struct {
 	Db       *postgres.DB
 	Bot      *telebot.Bot
 	TokenBot string
+	UrlLink  string
 	LogFile  *os.File
 }
 
@@ -44,6 +45,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 	}
 
 	app.Bot = bApi
+	app.UrlLink = cfg.UrlLink
 
 	return app, err
 }

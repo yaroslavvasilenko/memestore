@@ -18,11 +18,9 @@ type Photo struct {
 
 func (p *Photo) AnswerInlineQuery(bot *telebot.Bot, inlineQueryId, url, description string, nameFile string) error {
 	inlinePhoto := models.InlineQueryResultPhoto{
-		ID:          inlineQueryId,
-		PhotoURL:    url,
-		ThumbURL:    url,
-		Title:       nameFile,
-		Description: description,
+		ID:       inlineQueryId,
+		PhotoURL: url,
+		ThumbURL: "https://memestore-q0oy.onrender.com/thumb_url", //ToDo: plug
 	}
 
 	results := []models.InlineQueryResult{
