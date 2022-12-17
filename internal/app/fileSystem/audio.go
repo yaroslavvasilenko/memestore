@@ -4,7 +4,7 @@ import (
 	"context"
 	telebot "github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
-	"memestore/pkg/postgres"
+	memeModels "github.com/yaroslavvasilenko/meme_store_models"
 )
 
 type Audio struct {
@@ -39,13 +39,13 @@ func (a *Audio) AnswerInlineQuery(bot *telebot.Bot, inlineQueryId, url, descript
 	return nil
 }
 
-func (a *Audio) GiveFile() *postgres.File {
-	audio := &postgres.File{
+func (a *Audio) GiveFile() *memeModels.File {
+	audio := &memeModels.File{
 		ID:       a.ID,
 		Name:     a.Name,
 		Size:     a.Size,
 		IdUser:   a.IdUser,
-		TypeFile: postgres.TyAudio,
+		TypeFile: memeModels.TyAudio,
 		MimeType: a.MimeType,
 	}
 	return audio

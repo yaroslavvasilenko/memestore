@@ -2,7 +2,7 @@ package app
 
 import (
 	log "github.com/sirupsen/logrus"
-	"memestore/pkg/postgres"
+	memeModels "github.com/yaroslavvasilenko/meme_store_models"
 	"net/http"
 	"os"
 )
@@ -34,7 +34,7 @@ func (app *App) getFile(w http.ResponseWriter, r *http.Request) {
 	idUser := r.URL.Query().Get("id_user")
 	log.Println(idFile, idUser)
 
-	f, err := os.ReadFile(postgres.FilePath + idFile)
+	f, err := os.ReadFile(memeModels.FilePath + idFile)
 	if err != nil {
 		log.Debug(err)
 		return

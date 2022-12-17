@@ -10,12 +10,12 @@ import (
 	"os"
 	"strings"
 
-	"memestore/pkg/postgres"
+	memeModels "github.com/yaroslavvasilenko/meme_store_models"
 	"memestore/pkg/telegramapi"
 )
 
 type App struct {
-	Db       *postgres.DB
+	Db       *memeModels.DB
 	Bot      *telebot.Bot
 	TokenBot string
 	UrlLink  string
@@ -28,7 +28,7 @@ func NewApp(cfg *config.Config) (*App, error) {
 		return nil, err
 	}
 
-	mdb, err := postgres.PostgresInit(cfg.PostgresURL)
+	mdb, err := memeModels.PostgresInit(cfg.PostgresURL)
 	if err != nil {
 		return nil, err
 	}

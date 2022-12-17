@@ -4,7 +4,7 @@ import (
 	"context"
 	telebot "github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
-	"memestore/pkg/postgres"
+	memeModels "github.com/yaroslavvasilenko/meme_store_models"
 )
 
 type Video struct {
@@ -42,13 +42,13 @@ func (d *Video) AnswerInlineQuery(bot *telebot.Bot, inlineQueryId, url, descript
 	return nil
 }
 
-func (d *Video) GiveFile() *postgres.File {
-	video := &postgres.File{
+func (d *Video) GiveFile() *memeModels.File {
+	video := &memeModels.File{
 		ID:       d.ID,
 		Name:     d.Name,
 		Size:     d.Size,
 		IdUser:   d.IdUser,
-		TypeFile: postgres.TyVideo,
+		TypeFile: memeModels.TyVideo,
 		MimeType: d.MimeType,
 	}
 	return video

@@ -2,10 +2,10 @@ package fileSystem
 
 import (
 	"github.com/go-telegram/bot"
-	"memestore/pkg/postgres"
+	memeModels "github.com/yaroslavvasilenko/meme_store_models"
 )
 
 type ITypeFile interface {
 	AnswerInlineQuery(bot *bot.Bot, inlineQueryId, url, description string, nameFile string) error
-	GiveFile() *postgres.File
+	GiveFile() *memeModels.File
 }

@@ -4,12 +4,12 @@ import (
 	"context"
 	"fmt"
 	"github.com/go-telegram/bot"
+	memeModels "github.com/yaroslavvasilenko/meme_store_models"
 	"memestore/internal/app/fileSystem"
-	"memestore/pkg/postgres"
 )
 
 type fileModel struct {
-	FileDB    *postgres.File
+	FileDB    *memeModels.File
 	FileTgAPI fileSystem.ITypeFile
 }
 
@@ -20,7 +20,7 @@ func newFullFile(file fileSystem.ITypeFile) *fileModel {
 	}
 }
 
-func (app *App) Download(fileDb *postgres.File) error {
+func (app *App) Download(fileDb *memeModels.File) error {
 	f, _ := app.Bot.GetFile(context.TODO(), &bot.GetFileParams{
 		FileID: fileDb.ID,
 	})
