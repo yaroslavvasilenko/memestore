@@ -29,7 +29,7 @@ func GetConf() (*Config, error) {
 		Debug:       boolEnv(getVarEnv("DEBUG", "true")),
 		LogPath:     getVarEnv("LOG_PATH", "./log.txt"),
 		LogLevel:    getVarEnv("LOG_LEVEL", "info"),
-		UrlLink:     getVarEnv("UrlLink", ""),
+		UrlLink:     getVarEnv("URL_LINK", ""),
 		Webhook:     boolEnv(getVarEnv("WEBHOOK_BOOL", "true")),
 	}
 	return cfg, nil
