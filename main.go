@@ -19,8 +19,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	go myApp.ServerForLink()
-
 	if cfg.Webhook {
 		log.Info("Bot webhook started")
 		if err := myApp.RunWebhook(); err != nil {

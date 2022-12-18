@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
+	memeModels "github.com/yaroslavvasilenko/meme_store_models"
 	"memestore/internal/app/fileSystem"
-	"memestore/pkg/postgres"
 )
 
 func (app *App) makeTypeFile(m *models.Message) fileSystem.ITypeFile {
@@ -42,9 +42,9 @@ func (app *App) makeTypeFile(m *models.Message) fileSystem.ITypeFile {
 	return nil
 }
 
-func makeTypeFileForDB(file *postgres.File) fileSystem.ITypeFile {
+func makeTypeFileForDB(file *memeModels.File) fileSystem.ITypeFile {
 	switch file.TypeFile {
-	case postgres.TyDocument:
+	case memeModels.TyDocument:
 		return &fileSystem.Document{
 			ID:       file.ID,
 			Name:     file.Name,
@@ -53,7 +53,7 @@ func makeTypeFileForDB(file *postgres.File) fileSystem.ITypeFile {
 			MimeType: file.MimeType,
 		}
 
-	case postgres.TyAudio:
+	case memeModels.TyAudio:
 		return &fileSystem.Audio{
 			ID:       file.ID,
 			Name:     file.Name,
@@ -61,7 +61,7 @@ func makeTypeFileForDB(file *postgres.File) fileSystem.ITypeFile {
 			IdUser:   file.IdUser,
 			MimeType: file.MimeType,
 		}
-	case postgres.TyPhoto:
+	case memeModels.TyPhoto:
 		return &fileSystem.Photo{
 			ID:       file.ID,
 			Name:     file.Name,
@@ -69,7 +69,7 @@ func makeTypeFileForDB(file *postgres.File) fileSystem.ITypeFile {
 			IdUser:   file.IdUser,
 			MimeType: file.MimeType,
 		}
-	case postgres.TyVideo:
+	case memeModels.TyVideo:
 		return &fileSystem.Video{
 			ID:       file.ID,
 			Name:     file.Name,
