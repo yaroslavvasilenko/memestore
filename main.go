@@ -8,11 +8,11 @@ import (
 
 func main() {
 
+	log.Info("config initializing")
 	cfg, err := config.GetConf()
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Info("config initializing")
 
 	myApp, err := app.NewApp(cfg)
 	if err != nil {

@@ -1,11 +1,15 @@
-FROM golang:1.17-alpine
+# syntax=docker/dockerfile:1
 
-RUN mkdir /app
+FROM golang:latest as builder
 
-COPY . /app
+COPY . /go/src/github.com/yaroslavvasilenko/memestore/
+WORKDIR /go/src/github.com/yaroslavvasilenko/memestore/
+RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o app ./
 
-WORKDIR /app
+FROM alpine:latest as production
 
-RUN go build -o server .
-
-CMD [ "/app/server" ]
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=builder /go/src/github.com/yaroslavvasilenko/memestore/app ./
+COPY --from=builder /go/src/github.com/yaroslavvasilenko/memestore/.env ./
+CMD ["./app"]
