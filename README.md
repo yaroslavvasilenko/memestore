@@ -1,3 +1,3 @@
 # memestore
 
-t.me/MemesStore_bot
+https://t.me/MemesStore_bot
