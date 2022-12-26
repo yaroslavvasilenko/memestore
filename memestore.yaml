@@ -1,0 +1,27 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: memestorepod
+  labels:
+    app: memestore-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: memestore-bot
+  template:
+    metadata:
+      labels:
+        app: memestore-bot
+    spec:
+      containers:
+        - image: yaric01/memestore:1.0
+          name: memestore-cont
+          envFrom:
+            - configMapRef:
+                name: postgres-secret
+            - configMapRef:
+                name: memestore-bot-secret
+          ports:
+            - containerPort: 3306

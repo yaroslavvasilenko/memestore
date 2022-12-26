@@ -1,0 +1,14 @@
+# Create ConfigMap postgres-secret for the postgres app
+# Define default database name, user, and password
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: memestore-bot-secret
+  labels:
+    app: memestore-bot-secret
+data:
+  TELEGRAM_TOKEN: 5561193854:AAFdQ7lpLzxT7KCtQh2JphZ-sFoEt4eK0tE
+  WEBHOOK_BOOL: "false"
+  LOG_LEVEL: debug
+  DEBUG: "true"
+  URL_LINK: https://memestore-q0oy.onrender.com/

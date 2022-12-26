@@ -11,5 +11,4 @@ FROM alpine:3.17.0 as production
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 COPY --from=builder /go/src/github.com/yaroslavvasilenko/memestore/memestore ./
-COPY --from=builder /go/src/github.com/yaroslavvasilenko/memestore/.env ./
 CMD ["./memestore"]
