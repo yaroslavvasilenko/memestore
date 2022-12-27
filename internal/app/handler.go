@@ -3,7 +3,7 @@ package app
 import (
 	"fmt"
 	"github.com/go-telegram/bot/models"
-	log "github.com/sirupsen/logrus"
+	"memestore/pkg/log"
 	"strconv"
 )
 

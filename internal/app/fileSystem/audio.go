@@ -2,13 +2,14 @@ package fileSystem
 
 import (
 	"context"
-	telebot "github.com/go-telegram/bot"
+	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 	memeModels "github.com/yaroslavvasilenko/meme_store_models"
 )
 
 type Audio struct {
 	ITypeFile
+
 	ID       string
 	Name     string
 	Size     int
@@ -16,7 +17,7 @@ type Audio struct {
 	MimeType string
 }
 
-func (a *Audio) AnswerInlineQuery(bot *telebot.Bot, inlineQueryId, url, description string, nameFile string) error {
+func (a *Audio) AnswerInlineQuery(myBot *bot.Bot, inlineQueryId, url, description string, nameFile string) error {
 	inlineAudio := models.InlineQueryResultAudio{
 		ID:       inlineQueryId,
 		Title:    nameFile,
@@ -27,13 +28,13 @@ func (a *Audio) AnswerInlineQuery(bot *telebot.Bot, inlineQueryId, url, descript
 		&inlineAudio,
 	}
 
-	inlineConf := &telebot.AnswerInlineQueryParams{
+	inlineConf := &bot.AnswerInlineQueryParams{
 		InlineQueryID: inlineQueryId,
 		IsPersonal:    true,
 		Results:       results,
 	}
 
-	if _, err := bot.AnswerInlineQuery(context.TODO(), inlineConf); err != nil {
+	if _, err := myBot.AnswerInlineQuery(context.TODO(), inlineConf); err != nil {
 		return err
 	}
 	return nil

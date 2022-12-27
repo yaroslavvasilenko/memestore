@@ -6,6 +6,6 @@ import (
 )
 
 type ITypeFile interface {
-	AnswerInlineQuery(bot *bot.Bot, inlineQueryId, url, description string, nameFile string) error
+	AnswerInlineQuery(myBot *bot.Bot, inlineQueryId, url, description string, nameFile string) error
 	GiveFile() *memeModels.File
 }

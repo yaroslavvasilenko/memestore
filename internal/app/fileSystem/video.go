@@ -2,7 +2,7 @@ package fileSystem
 
 import (
 	"context"
-	telebot "github.com/go-telegram/bot"
+	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 	memeModels "github.com/yaroslavvasilenko/meme_store_models"
 )
@@ -16,7 +16,7 @@ type Video struct {
 	MimeType string
 }
 
-func (d *Video) AnswerInlineQuery(bot *telebot.Bot, inlineQueryId, url, description string, nameFile string) error {
+func (d *Video) AnswerInlineQuery(myBot *bot.Bot, inlineQueryId, url, description string, nameFile string) error {
 	inlineVideo := models.InlineQueryResultVideo{
 		ID:          inlineQueryId,
 		Title:       nameFile,
@@ -30,13 +30,13 @@ func (d *Video) AnswerInlineQuery(bot *telebot.Bot, inlineQueryId, url, descript
 		&inlineVideo,
 	}
 
-	inlineConf := &telebot.AnswerInlineQueryParams{
+	inlineConf := &bot.AnswerInlineQueryParams{
 		InlineQueryID: inlineQueryId,
 		IsPersonal:    true,
 		Results:       results,
 	}
 
-	if _, err := bot.AnswerInlineQuery(context.TODO(), inlineConf); err != nil {
+	if _, err := myBot.AnswerInlineQuery(context.TODO(), inlineConf); err != nil {
 		return err
 	}
 	return nil

@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
+	"memestore/pkg/log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -56,11 +56,12 @@ func boolEnv(valEnv string) bool {
 }
 
 func getUrlPostgres() string {
-	//db := getVarEnv("POSTGRES_DB", "")
+	db := getVarEnv("POSTGRES_DB", "")
 	userDb := getVarEnv("POSTGRES_USER", "")
 	passDb := getVarEnv("POSTGRES_PASSWORD", "")
+	hostDb := getVarEnv("POSTGRES_HOST", "")
 
-	dbURL := fmt.Sprintf("postgres://%s:%s@postgres:5432/appdb", userDb, passDb)
+	dbURL := fmt.Sprintf("postgres://%s:%s@%s:5432/%s", userDb, passDb, hostDb, db)
 	log.Info("URL Postgres - " + dbURL)
 	return dbURL
 }

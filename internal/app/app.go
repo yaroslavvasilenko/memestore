@@ -2,12 +2,10 @@ package app
 
 import (
 	"context"
-	telebot "github.com/go-telegram/bot"
+	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 	"memestore/pkg/config"
-	"memestore/pkg/logging"
 	"net/http"
-	"os"
 	"strings"
 
 	memeModels "github.com/yaroslavvasilenko/meme_store_models"
@@ -16,18 +14,12 @@ import (
 
 type App struct {
 	Db       *memeModels.DB
-	Bot      *telebot.Bot
+	Bot      *bot.Bot
 	TokenBot string
 	UrlLink  string
-	LogFile  *os.File
 }
 
 func NewApp(cfg *config.Config) (*App, error) {
-	logF, err := logging.InitLog(cfg)
-	if err != nil {
-		return nil, err
-	}
-
 	mdb, err := memeModels.PostgresInit(cfg.PostgresURL)
 	if err != nil {
 		return nil, err
@@ -36,7 +28,6 @@ func NewApp(cfg *config.Config) (*App, error) {
 	app := &App{
 		Db:       mdb,
 		TokenBot: cfg.TeleToken,
-		LogFile:  logF,
 	}
 
 	bApi, err := telegramapi.InitBot(cfg, app.handler)
@@ -51,17 +42,17 @@ func NewApp(cfg *config.Config) (*App, error) {
 }
 
 func (app *App) RunLongPool() {
-	//  app.Bot.DeleteWebhook(context.TODO(), &telebot.DeleteWebhookParams{false})
+	//  app.Bot.DeleteWebhook(context.TODO(), &bot.DeleteWebhookParams{false})
 	//  ToDo: No work
 
 	app.Bot.Start(context.TODO())
 }
 
 func (app *App) RunWebhook() error {
-	//  app.Bot.DeleteWebhook(context.TODO(), &telebot.DeleteWebhookParams{false})
+	//  app.Bot.DeleteWebhook(context.TODO(), &bot.DeleteWebhookParams{false})
 	//  ToDo: No work
 
-	_, err := app.Bot.SetWebhook(context.TODO(), &telebot.SetWebhookParams{
+	_, err := app.Bot.SetWebhook(context.TODO(), &bot.SetWebhookParams{
 		URL: "https://memestore.onrender.com/"})
 	if err != nil {
 		return err
@@ -77,7 +68,7 @@ func (app *App) RunWebhook() error {
 	return nil
 }
 
-func (app *App) handler(ctx context.Context, b *telebot.Bot, update *models.Update) {
+func (app *App) handler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	if update.InlineQuery != nil {
 		app.myInlineQuery(update)
 	} else if update.Message != nil && IsCommand(update.Message) {
