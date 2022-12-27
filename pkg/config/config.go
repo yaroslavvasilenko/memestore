@@ -12,8 +12,6 @@ type Config struct {
 	TeleToken   string
 	PostgresURL string
 	Debug       bool
-	LogPath     string
-	LogLevel    string
 	UrlLink     string
 	Webhook     bool
 }
@@ -29,8 +27,6 @@ func GetConf() (*Config, error) {
 		TeleToken:   getVarEnv("TELEGRAM_TOKEN", ""),
 		PostgresURL: getUrlPostgres(),
 		Debug:       boolEnv(getVarEnv("DEBUG", "true")),
-		LogPath:     getVarEnv("LOG_PATH", "./log.txt"),
-		LogLevel:    getVarEnv("LOG_LEVEL", "info"),
 		UrlLink:     getVarEnv("URL_LINK", ""), // linkServ address
 		Webhook:     boolEnv(getVarEnv("WEBHOOK_BOOL", "true")),
 	}
