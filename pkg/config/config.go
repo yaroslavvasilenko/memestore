@@ -20,7 +20,7 @@ type Config struct {
 func GetConf() (*Config, error) {
 	// Store the PATH environment variable in a variable
 	if err := godotenv.Load(); err != nil {
-		log.Info("No .env file found")
+		log.Log().Info("No .env file found")
 	}
 
 	cfg := &Config{
@@ -36,10 +36,10 @@ func GetConf() (*Config, error) {
 // Simple helper function to read an environment variable or return a default value
 func getVarEnv(key string, defaultVal string) string {
 	if value, exists := os.LookupEnv(key); exists {
-		log.Info(key + " = " + value)
+		log.Log().Info(key + " = " + value)
 		return value
 	}
-	log.Info("Default " + key + " = " + defaultVal)
+	log.Log().Info("Default " + key + " = " + defaultVal)
 	return defaultVal
 }
 
@@ -58,6 +58,6 @@ func getUrlPostgres() string {
 	hostDb := getVarEnv("POSTGRES_HOST", "")
 
 	dbURL := fmt.Sprintf("postgres://%s:%s@%s:5432/%s", userDb, passDb, hostDb, db)
-	log.Info("URL Postgres - " + dbURL)
+	log.Log().Info("URL Postgres - " + dbURL)
 	return dbURL
 }

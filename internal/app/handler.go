@@ -9,16 +9,16 @@ import (
 
 func (app *App) myInlineQuery(update *models.Update) {
 	f, err := app.Db.FindFile(update.InlineQuery.Query, update.InlineQuery.From.ID)
-	log.Info("Find file")
+	log.Log().Info("Find file")
 	if err != nil {
-		log.Debug(err, "file not found")
+		log.Log().Debug(err, "file not found")
 		return
 	}
 
 	file := makeTypeFileForDB(f)
-	log.Info("Type file")
+	log.Log().Info("Type file")
 	if file == nil {
-		log.Debug("no find file")
+		log.Log().Debug("no find file")
 		return
 	}
 	idUser := strconv.Itoa(f.IdUser)
@@ -26,9 +26,9 @@ func (app *App) myInlineQuery(update *models.Update) {
 	url := fmt.Sprintf(app.UrlLink+"for_telegram?id_user=%s&id_file=%s", idUser, f.ID)
 
 	err = file.AnswerInlineQuery(app.Bot, update.InlineQuery.ID, url, update.InlineQuery.Query, f.Name)
-	log.Info("Yes")
+	log.Log().Info("Yes")
 	if err != nil {
-		log.Debug(err)
+		log.Log().Debug(err)
 	}
 }
 
@@ -39,7 +39,7 @@ func (app *App) myInsertFile(update *models.Update) {
 	}
 	file := app.makeTypeFile(update.Message)
 	if file == nil {
-		log.Debug("no type file")
+		log.Log().Debug("no type file")
 		return
 	}
 
@@ -50,7 +50,7 @@ func (app *App) myInsertFile(update *models.Update) {
 	if app.Db.ExecUser(f.FileDB.IdUser) == false {
 		err := app.Db.CreateUser(f.FileDB)
 		if err != nil {
-			log.Debug(err)
+			log.Log().Debug(err)
 			return
 		}
 	}
@@ -61,17 +61,17 @@ func (app *App) myInsertFile(update *models.Update) {
 	}
 
 	if err := app.Download(f.FileDB); err != nil {
-		log.Debug(err)
+		log.Log().Debug(err)
 		return
 	}
 
 	if err := app.Db.InsertDB(f.FileDB); err != nil {
-		log.Debug(err)
+		log.Log().Debug(err)
 		return
 	}
 
 	if err := app.sendMessageFast(update.Message.Chat.ID, "File downloaded"); err != nil {
-		log.Debug(err)
+		log.Log().Debug(err)
 	}
 
 }
@@ -122,7 +122,7 @@ func (app *App) superUserCommand(arrayText []string, update *models.Update) {
 	}
 	if arrayText[0] == "superuserdeleteall" {
 		if err := app.Db.AllDelete(); err != nil {
-			log.Debug(err)
+			log.Log().Debug(err)
 			app.sendMessageFast(update.Message.Chat.ID, "что то не так")
 		}
 		app.sendMessageFast(update.Message.Chat.ID, "ready")

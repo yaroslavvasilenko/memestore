@@ -55,14 +55,6 @@ func getVarEnv(key string, defaultVal string) string {
 	return defaultVal
 }
 
-func Info(args ...interface{}) {
-	sugar.Info(args)
-}
-
-func Panic(args ...interface{}) {
-	sugar.Panic(args)
-}
-
-func Debug(args ...interface{}) {
-	sugar.Debug(args)
+func Log() *zap.SugaredLogger {
+	return sugar
 }
