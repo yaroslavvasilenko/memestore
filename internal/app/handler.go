@@ -2,9 +2,10 @@ package app
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/go-telegram/bot/models"
 	"memestore/pkg/log"
-	"strconv"
 )
 
 func (app *App) myInlineQuery(update *models.Update) {

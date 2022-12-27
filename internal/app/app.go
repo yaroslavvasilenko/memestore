@@ -2,11 +2,12 @@ package app
 
 import (
 	"context"
+	"net/http"
+	"strings"
+
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 	"memestore/pkg/config"
-	"net/http"
-	"strings"
 
 	memeModels "github.com/yaroslavvasilenko/meme_store_models"
 	"memestore/pkg/telegramapi"

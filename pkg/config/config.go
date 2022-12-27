@@ -2,8 +2,9 @@ package config
 
 import (
 	"fmt"
-	"memestore/pkg/log"
 	"os"
+
+	"memestore/pkg/log"
 
 	"github.com/joho/godotenv"
 )
