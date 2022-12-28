@@ -12,18 +12,18 @@ func main() {
 	log.Log().Info("config initializing")
 	cfg, err := config.GetConf()
 	if err != nil {
-		log.Log().Panic(err)
+		log.Log().Fatal(err)
 	}
 
 	myApp, err := app.NewApp(cfg)
 	if err != nil {
-		log.Log().Panic(err)
+		log.Log().Fatal(err)
 	}
 
 	if cfg.Webhook {
 		log.Log().Info("Bot webhook started")
 		if err := myApp.RunWebhook(); err != nil {
-			log.Log().Panic(err)
+			log.Log().Fatal(err)
 		}
 	} else {
 		log.Log().Info("Bot polling started")

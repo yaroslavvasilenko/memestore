@@ -19,12 +19,12 @@ func InitLog() string {
 	pathLog := getVarEnv("LOG_PATH", "./log.txt")
 	_, err := initLogFile(pathLog, 10000)
 	if err != nil {
-		log.Panic(fmt.Errorf("cannot create init log file %s", err.Error()))
+		log.Fatal(fmt.Errorf("cannot create init log file %s", err.Error()))
 	}
 	config.OutputPaths = []string{pathLog, "stderr"}
 	l, err := config.Build()
 	if err != nil {
-		log.Panic(fmt.Errorf("cannot create zap logger %s", err.Error()))
+		log.Fatal(fmt.Errorf("cannot create zap logger %s", err.Error()))
 	}
 	sugar = l.Sugar()
 

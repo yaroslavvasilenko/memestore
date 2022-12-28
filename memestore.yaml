@@ -16,7 +16,7 @@ spec:
         app: memestore-bot
     spec:
       containers:
-        - image: yaric01/memestore:1.0
+        - image: yaric01/memestore:1.1
           name: memestore-cont
           envFrom:
             - configMapRef:
