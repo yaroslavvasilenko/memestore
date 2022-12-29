@@ -7,8 +7,7 @@ metadata:
   labels:
     app: memestore-bot-secret
 data:
-  TELEGRAM_TOKEN: 5561193854:AAFdQ7lpLzxT7KCtQh2JphZ-sFoEt4eK0tE
+  TELEGRAM_TOKEN: TOKEN
   WEBHOOK_BOOL: "false"
   LOG_LEVEL: debug
   DEBUG: "true"
-  URL_LINK: https://memestore-q0oy.onrender.com/

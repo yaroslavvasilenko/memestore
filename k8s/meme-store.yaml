@@ -36,7 +36,6 @@ spec:
   type: LoadBalancer
   selector:
     app: memestore-bot
-  externaltrafficpolicy: Cluster
   ports:
     - name: http
       protocol: TCP
